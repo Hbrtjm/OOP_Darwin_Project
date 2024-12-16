@@ -8,8 +8,6 @@ import BaseClasses.MoveTranslator;
 import BaseClasses.Vector2d;
 import Enums.MapDirection;
 import Interfaces.WorldElement;
-import Interfaces.WorldMap;
-import org.codehaus.groovy.runtime.dgmimpl.arrays.IntegerArrayGetAtMetaMethod;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -133,7 +131,7 @@ public class Animal implements WorldElement {
     {
         return position.follows(bounds.lower()) && position.precedes(bounds.upper());
     }
-    public void actionBounded(Boundary boundary,Animal other, boolean canEat, Food food)
+    public void actionBounded(Boundary boundary,Animal other, boolean canEat, Plant plant)
     {
         moveNext(boundary);
         if(other != null) {
@@ -142,7 +140,7 @@ public class Animal implements WorldElement {
         // Same approach, sort and give food to the strongest one
         if(canEat)
         {
-            eat(food);
+            eat(plant);
         }
     }
     // Very stupid, but I would sort every animal
@@ -154,8 +152,8 @@ public class Animal implements WorldElement {
     {
         System.out.println("53x0");
     }
-    public void eat(Food food)
+    public void eat(Plant plant)
     {
-        addEnergy(food.getEnergy());
+        addEnergy(plant.getEnergy());
     }
 }

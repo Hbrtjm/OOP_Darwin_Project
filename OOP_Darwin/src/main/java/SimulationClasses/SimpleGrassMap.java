@@ -11,7 +11,7 @@ import java.util.*;
 
 public class SimpleGrassMap implements WorldMap {
     private Boundary currentBounds;
-    private Map<Vector2d,Food> plants;
+    private Map<Vector2d, Plant> plants;
     private Map<Vector2d,List<Animal>> animals;
     List<MapChangeListener> listeners;
     private int daysCount;
@@ -71,7 +71,7 @@ public class SimpleGrassMap implements WorldMap {
         animals.putIfAbsent(animal.getPosition(),animalsAtPosition);
     }
 
-    public void placePlant(Food plant,Vector2d position)
+    public void placePlant(Plant plant, Vector2d position)
     {
         plants.putIfAbsent(position,plant);
     }

@@ -1,6 +1,6 @@
 package SimulationClasses;
 
-public class Grass extends Food {
+public class Grass extends Plant {
     public Grass()
     {
         super(20);
