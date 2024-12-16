@@ -33,21 +33,6 @@ public class Animal implements WorldElement {
     {
         return true; // For now
     }
-//    public static int compare(Animal other)
-//    {
-//        if(equals(other))
-//        {
-//            return 0;
-//        }
-//        else if (other.getEnergyLevel() < getEnergyLevel())
-//        {
-//            return -1;
-//        }
-//        else
-//        {
-//            return 1;
-//        }
-//    }
     private List<Integer> generateGenes(int genotypeLength)
     {
         List<Integer> newGenes = new ArrayList<>();
@@ -108,7 +93,7 @@ public class Animal implements WorldElement {
     }
     public void subtractEnergy(double energy)
     {
-        energyLevel = Math.max(0,energy-energyLevel);
+        energyLevel = Math.max(0,energyLevel-energy);
     }
     public MapDirection getCurrentDirection()
     {
@@ -117,6 +102,11 @@ public class Animal implements WorldElement {
     public Integer getCurrentDirectionInteger() { return currentDirection; }
     public boolean isAt(Vector2d position) {
         return currentPosition.equals(position);
+    }
+    public void setPositionAndDirection(Vector2d newPosition, int directionChange)
+    {
+        currentPosition = newPosition;
+        currentDirection = (currentDirection+directionChange)%8;
     }
     @Override
     public Vector2d getPosition()
@@ -160,7 +150,7 @@ public class Animal implements WorldElement {
     // they both know that they are mating (hopefully),
     // so the kid needs to be registered once, this should happen
     // on the map
-    private void mate(Animal other)
+    public void mate(Animal other)
     {
         System.out.println("53x0");
     }

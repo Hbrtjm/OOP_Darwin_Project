@@ -1,6 +1,5 @@
 package SimulationClasses;
 
-import BaseClasses.AnimalComparator;
 import BaseClasses.Boundary;
 import BaseClasses.Vector2d;
 import Enums.MapDirection;
@@ -13,9 +12,43 @@ import java.util.*;
 public class SimpleGrassMap implements WorldMap {
     private Boundary currentBounds;
     private Map<Vector2d,Food> plants;
-    private Map<Vector2d,List<Animal>> animals; // The above will be deprecated
+    private Map<Vector2d,List<Animal>> animals;
     List<MapChangeListener> listeners;
     private int daysCount;
+    public SimpleGrassMap()
+    {
+        this.animals = animals;
+        daysCount = 0;
+    }
+    public SimpleGrassMap(Boundary boundary)
+    {
+        daysCount = 0;
+        currentBounds = boundary;
+    }
+    public SimpleGrassMap(Boundary boundary,List<Animal> newAnimals)
+    {
+        addAnimals(newAnimals);
+        daysCount = 0;
+        currentBounds = boundary;
+    }
+    private void addAnimals(List<Animal> newAnimals)
+    {
+        for(Animal animal : newAnimals)
+        {
+            if(animals.get(animal.getPosition()) == null)
+            {
+                List<Animal> newAnimalList = new ArrayList<>();
+                newAnimalList.add(animal);
+                animals.putIfAbsent(animal.getPosition(),newAnimalList);
+                continue;
+            }
+            List<Animal> currentPositionAnimals = animals.get(animal.getPosition());
+            currentPositionAnimals.add(animal);
+            animals.remove(animal.getPosition());
+            animals.putIfAbsent(animal.getPosition(),currentPositionAnimals);
+        }
+    }
+
     @Override
     public int getID() {
         return 0;
@@ -25,7 +58,10 @@ public class SimpleGrassMap implements WorldMap {
     public Boundary getCurrentBounds() {
         return currentBounds;
     }
-
+    public void setCurrentBounds(Boundary boundary)
+    {
+        currentBounds = boundary;
+    }
     @Override
     public void place(Animal animal) {
         // Probably not necessary
@@ -60,10 +96,11 @@ public class SimpleGrassMap implements WorldMap {
     {
         for(Vector2d key: animals.keySet())
         {
-            for(Animal animal : animals.get(key)) {
+            for(Animal animal : animals.get(key))
+            {
                 animal.moveNext(currentBounds);
             }
-            }
+        }
     }
     public void feedAll()
     {
@@ -75,6 +112,20 @@ public class SimpleGrassMap implements WorldMap {
 
                 // Feed the first animal in the sorted list
                 animalPlace.getFirst().eat(plants.get(key));
+            }
+        }
+    }
+    public void mateAll()
+    {
+        for(Vector2d key : animals.keySet())
+        {
+            List<Animal> animalPlace = animals.get(key);
+            if (animalPlace != null && !animalPlace.isEmpty()) {
+                animalPlace.sort(Comparator.comparingDouble(Animal::getEnergyLevel));
+
+                for (int i = 0; i < animalPlace.size(); i += 2) {
+                    animalPlace.get(i).mate(animalPlace.get(i + 1));
+                }
             }
         }
     }
@@ -97,18 +148,21 @@ public class SimpleGrassMap implements WorldMap {
 
         return combined;
     }
-
     @Override
     public void initialState()
     {
         mapChanged("Initial state");
     }
-
     @Override
     public void frame()
     {
-        mapChanged("Day " + daysCount);
+        deleteCorpses();
+        moveAll();
+        feedAll();
+        mateAll();
+
         daysCount++;
+        mapChanged("Day " + daysCount);
     }
     @Override
     public boolean canMoveTo(Vector2d position)
