@@ -19,11 +19,10 @@ public class Animal implements WorldElement {
     private double maxEnergyLevel;
     private Vector2d currentPosition;
     private Integer currentDirection;
-    private int currentGene;
     private int currentMove;
-    private List<Integer> genes;
+    private Genes genes;
     private Collection<Animal> kids;
-    private List<Integer> getGenes()
+    private Genes getGenes()
     {
         return genes;
     }
@@ -31,24 +30,17 @@ public class Animal implements WorldElement {
     {
         return true; // For now
     }
-    private List<Integer> generateGenes(int genotypeLength)
-    {
-        List<Integer> newGenes = new ArrayList<>();
-        while(genotypeLength-- != 0) {
-            newGenes.add(ThreadLocalRandom.current().nextInt(0, 8));
-        }
-        return newGenes;
-    }
     public Animal()
     {
         color = 0;
         int genesAmount = ThreadLocalRandom.current().nextInt(1, 101);
-        genes = generateGenes(genesAmount);
+        genes = new Genes();
+        genes.generateGenes(genesAmount);
         maxEnergyLevel = Double.POSITIVE_INFINITY;
         currentDirection = 0;
         currentPosition = new Vector2d(2, 2);
     }
-    public Animal(Integer direction, Vector2d position,Integer animalColor,double maxEnergy, int geneAmount)
+    public Animal(Integer direction, Vector2d position,Integer animalColor,double maxEnergy, int genesAmount)
     {
         this();
         if(animalColor != null){
@@ -65,11 +57,12 @@ public class Animal implements WorldElement {
         {
             currentPosition = position;
         }
-        if(geneAmount > 0) {
-            genes = generateGenes(geneAmount);
+        if(genesAmount > 0) {
+            genes = new Genes();
+            genes.generateGenes(genesAmount);
         }
     }
-    public Animal(Integer direction, Vector2d position,Integer animalColor,double maxEnergy,List<Integer> inheritedGenes)
+    public Animal(Integer direction, Vector2d position,Integer animalColor,double maxEnergy,Genes inheritedGenes)
     {
         this(direction, position,animalColor,maxEnergy,0);
         if(inheritedGenes != null)
@@ -114,7 +107,7 @@ public class Animal implements WorldElement {
     public void moveNext(Boundary boundary)
     {
         // One-liner to be changed, but looks funny for now...
-        currentDirection = MapDirection.changeDirection(currentDirection,genes.get(currentGene++));
+        currentDirection = MapDirection.changeDirection(currentDirection,genes.next());
         currentPosition.add(MoveTranslator.TranslateOne(currentDirection).toUnitVector());
         if(!inBounds(currentPosition,boundary))
         {
@@ -124,7 +117,7 @@ public class Animal implements WorldElement {
     public void moveNextBoundless()
     {
         // One-liner to be changed, but looks funny for now...
-        currentDirection = MapDirection.changeDirection(currentDirection,genes.get(currentGene++));
+        currentDirection = MapDirection.changeDirection(currentDirection,genes.next());
         currentPosition.add(MoveTranslator.TranslateOne(currentDirection).toUnitVector());
     }
     private boolean inBounds(Vector2d position, Boundary bounds)

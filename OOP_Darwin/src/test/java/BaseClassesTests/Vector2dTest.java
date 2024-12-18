@@ -1,4 +1,4 @@
 package BaseClassesTests;
 
-public class AnimalTest {
+public class Vector2dTest {
 }
