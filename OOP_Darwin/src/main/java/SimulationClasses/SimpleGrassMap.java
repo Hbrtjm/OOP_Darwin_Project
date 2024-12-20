@@ -80,14 +80,16 @@ public class SimpleGrassMap implements WorldMap {
     public void move(Animal animal, MapDirection direction) {
         animal.moveNext(currentBounds);
     }
-
     public void deleteCorpses()
     {
         for(Vector2d key: animals.keySet())
         {
-            for(Animal animal : animals.get(key)) {
+            List<Animal> animalsList = animals.get(key);
+            for(Animal animal : animalsList) {
                 if (animal.getEnergyLevel() == 0) {
-                    animal = null; // The garbage collector will handle this
+                    animals.remove(key);
+                    animalsList.remove(animal); // The garbage collector will handle this
+                    animals.putIfAbsent(key,animalsList);
                 }
             }
         }
@@ -160,7 +162,6 @@ public class SimpleGrassMap implements WorldMap {
         moveAll();
         feedAll();
         mateAll();
-
         daysCount++;
         mapChanged("Day " + daysCount);
     }

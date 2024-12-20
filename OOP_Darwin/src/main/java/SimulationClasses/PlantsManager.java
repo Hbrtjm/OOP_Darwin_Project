@@ -65,6 +65,7 @@ public class PlantsManager {
                 {
                     equalCounts = new ArrayList<>();
                     equalCounts.add(currentPosition);
+                    neighborCounts.putIfAbsent(currentCount,equalCounts);
                     continue;
                 }
                 equalCounts.add(currentPosition);

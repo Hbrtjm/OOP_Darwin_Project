@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RandomPositionGenerator implements Iterable<Vector2d>, Iterator<Vector2d> {
-
         private int index = 0;
         private final int gCount;
         private final List<Vector2d> X = new ArrayList<>();
@@ -47,5 +46,4 @@ public class RandomPositionGenerator implements Iterable<Vector2d>, Iterator<Vec
                 X.set(new_index, temp);
             }
         }
-
 }

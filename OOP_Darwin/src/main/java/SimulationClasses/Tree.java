@@ -1,5 +1,5 @@
 package SimulationClasses;
-
+// DEPRECATED
 public class Tree extends Plant {
     public Tree()
     {
@@ -10,4 +10,3 @@ public class Tree extends Plant {
         return "T"; // Will be replaced by a colorful field
     }
 }
-

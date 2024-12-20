@@ -14,6 +14,8 @@ import java.util.List;
 
 // F2
 public class Animal implements WorldElement {
+    private int age;
+    private int children;
     public int color;
     private double energyLevel = 150;
     private double maxEnergyLevel;
@@ -109,6 +111,10 @@ public class Animal implements WorldElement {
         // One-liner to be changed, but looks funny for now...
         currentDirection = MapDirection.changeDirection(currentDirection,genes.next());
         currentPosition.add(MoveTranslator.TranslateOne(currentDirection).toUnitVector());
+        if(currentPosition.getY() > boundary.upper().getY() && currentPosition.getY() < boundary.lower().getY())
+        {
+            currentDirection = MapDirection.changeDirection(currentDirection,4);
+        }
         if(!inBounds(currentPosition,boundary))
         {
             currentPosition.subtract(MoveTranslator.TranslateOne(currentDirection).toUnitVector());
@@ -141,9 +147,11 @@ public class Animal implements WorldElement {
     // they both know that they are mating (hopefully),
     // so the kid needs to be registered once, this should happen
     // on the map
-    public void mate(Animal other)
+    public Animal mate(Animal other)
     {
+        // Geny z energii w self i other
         System.out.println("53x0");
+        return new Animal();
     }
     public void eat(Plant plant)
     {
