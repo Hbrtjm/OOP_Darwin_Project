@@ -11,22 +11,27 @@ import java.util.*;
 
 public class SimpleGrassMap implements WorldMap {
     private Boundary currentBounds;
-    private Map<Vector2d, Plant> plants;
-    private Map<Vector2d,List<Animal>> animals;
+    private final Map<Vector2d, Plant> plants;
+    private final Map<Vector2d,List<Animal>> animals;
     List<MapChangeListener> listeners;
     private int daysCount;
     public SimpleGrassMap()
     {
-        this.animals = animals;
+        plants = new HashMap<>();
+        animals = new HashMap<>();
         daysCount = 0;
     }
     public SimpleGrassMap(Boundary boundary)
     {
+        plants = new HashMap<>();
+        animals = new HashMap<>();
         daysCount = 0;
         currentBounds = boundary;
     }
     public SimpleGrassMap(Boundary boundary,List<Animal> newAnimals)
     {
+        plants = new HashMap<>();
+        animals = new HashMap<>();
         addAnimals(newAnimals);
         daysCount = 0;
         currentBounds = boundary;
@@ -104,16 +109,26 @@ public class SimpleGrassMap implements WorldMap {
             }
         }
     }
+    private void orderAnimals(List<Animal> animals)
+    {
+        // Practically a radix sort - start from the least significant property
+        // The least significant is the kids count
+        animals.sort(Comparator.comparingInt(Animal::getChildrenCount));
+        // The second factor is the age
+        animals.sort(Comparator.comparingInt(Animal::getAge));
+        // The primary factor is energy level
+        animals.sort(Comparator.comparingInt(Animal::getEnergyLevel));
+    }
     public void feedAll()
     {
         for(Vector2d key : animals.keySet())
         {
             List<Animal> animalPlace = animals.get(key);
             if (animalPlace != null && !animalPlace.isEmpty()) {
-                animalPlace.sort(Comparator.comparingDouble(Animal::getEnergyLevel));
-
+                orderAnimals(animalPlace);
                 // Feed the first animal in the sorted list
                 animalPlace.getFirst().eat(plants.get(key));
+                plants.remove(key);
             }
         }
     }
@@ -122,12 +137,16 @@ public class SimpleGrassMap implements WorldMap {
         for(Vector2d key : animals.keySet())
         {
             List<Animal> animalPlace = animals.get(key);
+            List<Animal> kids = new ArrayList<>();
             if (animalPlace != null && !animalPlace.isEmpty()) {
-                animalPlace.sort(Comparator.comparingDouble(Animal::getEnergyLevel));
-
+                orderAnimals(animalPlace);
                 for (int i = 0; i < animalPlace.size(); i += 2) {
-                    animalPlace.get(i).mate(animalPlace.get(i + 1));
+                    Animal newKid = animalPlace.get(i).mate(animalPlace.get(i + 1));
+                    kids.add(newKid);
                 }
+                animals.remove(key);
+                animalPlace.addAll(kids);
+                animals.putIfAbsent(key,animalPlace);
             }
         }
     }
@@ -168,8 +187,8 @@ public class SimpleGrassMap implements WorldMap {
     @Override
     public boolean canMoveTo(Vector2d position)
     {
-        // To do and to be discussed
-        return false;
+        // TODO and to be discussed
+        return true;
     }
     public void mapChanged(String change)
     {

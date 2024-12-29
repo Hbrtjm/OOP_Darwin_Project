@@ -1,7 +1,6 @@
 package SimulationClasses;
 
 import Enums.MapType;
-import Enums.PlantGrowthType;
 import Enums.MutationType;
 
 public record SimulationParameters (
@@ -11,7 +10,6 @@ public record SimulationParameters (
         int initialPlantCount,
         double plantEnergy,
         int dailyPlantGrowth,
-        PlantGrowthType plantGrowthVariant,
         int initialAnimalCount,
         double initialAnimalEnergy,
         double energyRequiredToBeFed,

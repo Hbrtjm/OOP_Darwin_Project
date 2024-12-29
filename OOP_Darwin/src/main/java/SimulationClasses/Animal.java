@@ -1,6 +1,7 @@
 package SimulationClasses;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import BaseClasses.Boundary;
@@ -9,16 +10,14 @@ import BaseClasses.Vector2d;
 import Enums.MapDirection;
 import Interfaces.WorldElement;
 
-import java.util.ArrayList;
-import java.util.List;
-
 // F2
 public class Animal implements WorldElement {
     private int age;
-    private int children;
+    private List<Animal> children;
     public int color;
-    private double energyLevel = 150;
-    private double maxEnergyLevel;
+    private int energyLevel = 150;
+    // If the maxEnergyLevel value can be universal, then we can make it a static
+    private static int maxEnergyLevel;
     private Vector2d currentPosition;
     private Integer currentDirection;
     private int currentMove;
@@ -38,11 +37,11 @@ public class Animal implements WorldElement {
         int genesAmount = ThreadLocalRandom.current().nextInt(1, 101);
         genes = new Genes();
         genes.generateGenes(genesAmount);
-        maxEnergyLevel = Double.POSITIVE_INFINITY;
+        maxEnergyLevel = Integer.MAX_VALUE;
         currentDirection = 0;
         currentPosition = new Vector2d(2, 2);
     }
-    public Animal(Integer direction, Vector2d position,Integer animalColor,double maxEnergy, int genesAmount)
+    public Animal(Integer direction, Vector2d position,Integer animalColor,int maxEnergy, int genesAmount)
     {
         this();
         if(animalColor != null){
@@ -64,7 +63,7 @@ public class Animal implements WorldElement {
             genes.generateGenes(genesAmount);
         }
     }
-    public Animal(Integer direction, Vector2d position,Integer animalColor,double maxEnergy,Genes inheritedGenes)
+    public Animal(Integer direction, Vector2d position,Integer animalColor,int maxEnergy,Genes inheritedGenes)
     {
         this(direction, position,animalColor,maxEnergy,0);
         if(inheritedGenes != null)
@@ -72,19 +71,23 @@ public class Animal implements WorldElement {
             genes = inheritedGenes;
         }
     }
-    public double getEnergyLevel()
+    public int getEnergyLevel()
     {
         return energyLevel;
     }
+    public int getAge() { return age; }
+    public List<Animal> getChildren() { return children; }
+    public int getChildrenCount() { return children.size(); }
+    public void setMaxEnergyLevel(int newMaxEnergyLevel) { maxEnergyLevel = newMaxEnergyLevel; }
     public void setEnergyLevel(int newEnergyLevel)
     {
         energyLevel = newEnergyLevel;
     }
-    public void addEnergy(double energy)
+    public void addEnergy(int energy)
     {
         energyLevel = Math.min(maxEnergyLevel,energy+energyLevel);
     }
-    public void subtractEnergy(double energy)
+    public void subtractEnergy(int energy)
     {
         energyLevel = Math.max(0,energyLevel-energy);
     }
@@ -149,9 +152,11 @@ public class Animal implements WorldElement {
     // on the map
     public Animal mate(Animal other)
     {
+        Genes childGenes = new Genes();
         // Geny z energii w self i other
-        System.out.println("53x0");
-        return new Animal();
+        childGenes.combineGenes(energyLevel,other.getEnergyLevel(),genes,other.getGenes());
+        // TODO - Random position for now, to be discussed
+        return new Animal(ThreadLocalRandom.current().nextInt(0,9),currentPosition,color,maxEnergyLevel,childGenes);
     }
     public void eat(Plant plant)
     {

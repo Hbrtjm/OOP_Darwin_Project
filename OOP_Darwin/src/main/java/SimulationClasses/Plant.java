@@ -1,8 +1,8 @@
 package SimulationClasses;
 
 abstract public class Plant {
-    private double energy;
-    public double getEnergy()
+    private int energy;
+    public int getEnergy()
     {
         return energy;
     }
@@ -10,7 +10,7 @@ abstract public class Plant {
     {
         energy = 10;
     }
-    public Plant(double initialEnergy)
+    public Plant(int initialEnergy)
     {
         this();
         energy = initialEnergy;
