@@ -80,14 +80,12 @@ public class PlantsManager {
         int grown = 0;
         for(Integer i = 8;i >= 0;i--)
         {
-            ArrayList<Plant> list = neighborCounts.get(i);
-            ListRandomizer(list);
-            
+            List<Vector2d> list = neighborCounts.get(i);
+            ListRandomizer randomizer = new ListRandomizer((ArrayList<Vector2d>) list);
             if(list != null)
             {
                 if(grown >= maxChangeOfPlants)
                     continue;
-
             }
         }
     }

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="ViewClasses.SimulationParametersController"
+            minHeight="600.0" minWidth="900.0">
+
+    <top>
+        <Label text="Simulation Parameters"
+               style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-padding: 10px;"
+               BorderPane.alignment="CENTER" />
+    </top>
+    <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-padding: 10px;">
+            <VBox spacing="20.0" alignment="TOP_CENTER">
+                <GridPane hgap="15.0" vgap="15.0" alignment="CENTER">
+                    <Label text="Map Width:" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+                    <TextField fx:id="mapWidthField" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+
+                    <Label text="Map Height:" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+                    <TextField fx:id="mapHeightField" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+
+                    <Label text="Map Variant:" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+                    <ComboBox fx:id="mapVariantComboBox" GridPane.rowIndex="2" GridPane.columnIndex="1" />
+
+                    <Label text="Initial Plant Count:" GridPane.rowIndex="3" GridPane.columnIndex="0" />
+                    <TextField fx:id="initialPlantCountField" GridPane.rowIndex="3" GridPane.columnIndex="1" />
+                    <Slider fx:id="initialPlantCountSlider" GridPane.rowIndex="3" GridPane.columnIndex="2" />
+
+                    <Label text="Plant Energy:" GridPane.rowIndex="4" GridPane.columnIndex="0" />
+                    <TextField fx:id="plantEnergyField" GridPane.rowIndex="4" GridPane.columnIndex="1" />
+                    <Slider fx:id="plantEnergySlider" GridPane.rowIndex="4" GridPane.columnIndex="2" />
+
+                    <Label text="Daily Plant Growth:" GridPane.rowIndex="5" GridPane.columnIndex="0" />
+                    <TextField fx:id="dailyPlantGrowthField" GridPane.rowIndex="5" GridPane.columnIndex="1" />
+                    <Slider fx:id="dailyPlantGrowthSlider" GridPane.rowIndex="5" GridPane.columnIndex="2" />
+
+                    <Label text="Initial Animal Count:" GridPane.rowIndex="6" GridPane.columnIndex="0" />
+                    <TextField fx:id="initialAnimalCountField" GridPane.rowIndex="6" GridPane.columnIndex="1" />
+                    <Slider fx:id="initialAnimalCountSlider" GridPane.rowIndex="6" GridPane.columnIndex="2" />
+
+                    <Label text="Initial Animal Energy:" GridPane.rowIndex="7" GridPane.columnIndex="0" />
+                    <TextField fx:id="initialAnimalEnergyField" GridPane.rowIndex="7" GridPane.columnIndex="1" />
+                    <Slider fx:id="initialAnimalEnergySlider" GridPane.rowIndex="7" GridPane.columnIndex="2" />
+
+                    <Label text="Energy to Be Fed:" GridPane.rowIndex="8" GridPane.columnIndex="0" />
+                    <TextField fx:id="energyRequiredToBeFedField" GridPane.rowIndex="8" GridPane.columnIndex="1" />
+                    <Slider fx:id="energyRequiredToBeFedSlider" GridPane.rowIndex="8" GridPane.columnIndex="2" />
+
+                    <Label text="Energy for Reproduction:" GridPane.rowIndex="9" GridPane.columnIndex="0" />
+                    <TextField fx:id="energyUsedForReproductionField" GridPane.rowIndex="9" GridPane.columnIndex="1" />
+                    <Slider fx:id="energyUsedForReproductionSlider" GridPane.rowIndex="9" GridPane.columnIndex="2" />
+
+                    <Label text="Min Mutations:" GridPane.rowIndex="10" GridPane.columnIndex="0" />
+                    <TextField fx:id="minMutationsField" GridPane.rowIndex="10" GridPane.columnIndex="1" />
+                    <Slider fx:id="minMutationsSlider" GridPane.rowIndex="10" GridPane.columnIndex="2" />
+
+                    <Label text="Max Mutations:" GridPane.rowIndex="11" GridPane.columnIndex="0" />
+                    <TextField fx:id="maxMutationsField" GridPane.rowIndex="11" GridPane.columnIndex="1" />
+                    <Slider fx:id="maxMutationsSlider" GridPane.rowIndex="11" GridPane.columnIndex="2" />
+
+                    <Label text="Mutation Variant:" GridPane.rowIndex="12" GridPane.columnIndex="0" />
+                    <ComboBox fx:id="mutationVariantComboBox" GridPane.rowIndex="12" GridPane.columnIndex="1" />
+
+                    <Label text="Genome Length:" GridPane.rowIndex="13" GridPane.columnIndex="0" />
+                    <TextField fx:id="genomeLengthField" GridPane.rowIndex="13" GridPane.columnIndex="1" />
+                    <Slider fx:id="genomeLengthSlider" GridPane.rowIndex="13" GridPane.columnIndex="2" />
+                </GridPane>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <bottom>
+        <HBox alignment="CENTER" spacing="10.0" style="-fx-padding: 10px;">
+            <Button text="Submit" onAction="#handleSubmit" />
+        </HBox>
+    </bottom>
+</BorderPane>

@@ -163,9 +163,9 @@ public class SimpleGrassMap implements WorldMap {
     public Collection<WorldElement> objectsAt()
     {
         List<WorldElement> combined = new ArrayList<>();
-        combined.addAll((Collection<? extends WorldElement>)plants.values());
-
-        combined.addAll((Collection<? extends WorldElement>)animals.values());
+//        combined.addAll((Collection<? extends WorldElement>)plants.values());
+//
+//        combined.addAll((Collection<? extends WorldElement>)animals.values());
 
         return combined;
     }
