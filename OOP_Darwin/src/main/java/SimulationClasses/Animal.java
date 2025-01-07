@@ -129,6 +129,36 @@ public class Animal implements WorldElement {
             currentPosition.subtract(MoveTranslator.TranslateOne(currentDirection).toUnitVector());
         }
     }
+    
+    public void moveNextOnGlobeMap(Boundary boundary)
+    {
+        currentDirection = MapDirection.changeDirection(currentDirection,genes.next());
+
+        //newPosition is for testing if animal does not go over boundaries
+        Vector2d newPosition=new Vector2d(currentPosition.getX(),currentPosition.getY());
+        newPosition.add(MoveTranslator.TranslateOne(currentDirection).toUnitVector());
+
+        //going over upper/lower boundary
+        if (newPosition.getY() > boundary.upper().getY() || newPosition.getY() < boundary.lower().getY() )
+        {
+            currentDirection = MapDirection.changeDirection(currentDirection,4);
+        }
+        else
+        {
+            //going over left boundary
+            if (newPosition.getX() < boundary.lower().getX()) {
+                currentPosition.add(MoveTranslator.TranslateOne(currentDirection).toUnitVector()); //ruch odbywa się jak bez granic
+                currentPosition.add(new Vector2d(boundary.upper().getX() - boundary.lower().getX() + 1, 0)); // następuje przeniesienie na drugą stronę mapy
+            }
+
+            //going over right boundary
+            if (newPosition.getX() > boundary.upper().getX()) {
+                currentPosition.add(MoveTranslator.TranslateOne(currentDirection).toUnitVector());
+                currentPosition.add(new Vector2d(boundary.lower().getX() - boundary.upper().getX() - 1, 0));
+            }
+        }
+    }
+    
     public void moveNextBoundless()
     {
         // One-liner to be changed, but looks funny for now...
