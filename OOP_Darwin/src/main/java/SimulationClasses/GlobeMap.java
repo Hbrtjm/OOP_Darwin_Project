@@ -4,7 +4,9 @@ public class GlobeMap extends SimpleGrassMap {
     public GlobeMap() {
         super();
     }
-
+    public GlobeMap(SimulationParameters parameters) {
+        super(parameters);
+    }
     @Override
     public void moveAll()
     {

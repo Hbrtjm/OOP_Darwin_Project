@@ -4,30 +4,14 @@ import BaseClasses.Boundary;
 import BaseClasses.ListRandomizer;
 import BaseClasses.Vector2d;
 
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
-public class PlantsManager {
-    private Map<Vector2d, Plant> plants;
-    private Map<Integer, List<Vector2d>> neighborCounts;
-    private int maxChangeOfPlants;
-    public void setMaxAddPlant(int maxChange)
-    {
-        maxChangeOfPlants = maxChange;
-    }
-    public void removePlant(Vector2d position)
-    {
-        plants.remove(position);
-    }
-    public Map<Vector2d,Plant> getPlants()
-    {
-        return plants;
-    }
-    public int getMaxAddPlant()
-    {
-        return maxChangeOfPlants;
+public class CreepingJunglePlantsManager extends BasicPlantManager {
+    public CreepingJunglePlantsManager() {
+        super();
     }
     private Integer countNeighbors(Vector2d position, Boundary boundaries)
     {
@@ -42,8 +26,8 @@ public class PlantsManager {
                 if
                 (
                         boundaries.lower().precedes(currentVector) &&
-                        boundaries.upper().follows(currentVector) &&
-                        plants.get(new Vector2d(i,j)) != null
+                                boundaries.upper().follows(currentVector) &&
+                                plants.get(new Vector2d(i,j)) != null
                 )
                 {
                     count++;
@@ -74,18 +58,33 @@ public class PlantsManager {
             }
         }
     }
+    @Override
     public void growPlants(Boundary boundary)
     {
         sortPositions(boundary);
         int grown = 0;
-        for(Integer i = 8;i >= 0;i--)
+        int grow;
+        // This should be used as a parameter
+        double maxBias = 0.5;
+        int bias = (int) (maxChangeOfPlants * maxBias);
+        for(int i = 8; i >= 0; i--)
         {
             List<Vector2d> list = neighborCounts.get(i);
-            ListRandomizer randomizer = new ListRandomizer((ArrayList<Vector2d>) list);
             if(list != null)
             {
-                if(grown >= maxChangeOfPlants)
-                    continue;
+                ListRandomizer randomizer = new ListRandomizer((ArrayList<Vector2d>) list);
+                grow = ThreadLocalRandom.current().nextInt(bias,maxChangeOfPlants);
+                for(int j = 0;j < grow && grown < maxChangeOfPlants;j++)
+                {
+                    plants.putIfAbsent(randomizer.next(),new Grass());
+                    grown++;
+                }
+                if (grown == maxChangeOfPlants)
+                {
+                    break;
+                }
+                int change = (int) (maxChangeOfPlants * (maxBias /8));
+                bias = Math.max(0,bias - change);
             }
         }
     }

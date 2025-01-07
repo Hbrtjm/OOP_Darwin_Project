@@ -1,4 +1,2 @@
 rootProject.name = 'OOP_Darwin'
-include 'src:main:tests'
-findProject(':src:main:tests')?.name = 'tests'
 

@@ -20,6 +20,7 @@ public class Animal implements WorldElement {
     private static int maxEnergyLevel;
     private Vector2d currentPosition;
     private Integer currentDirection;
+    private int matingEnergy;
     private int currentMove;
     private Genes genes;
     private Collection<Animal> kids;
@@ -31,6 +32,7 @@ public class Animal implements WorldElement {
     {
         return true; // For now
     }
+
     public Animal()
     {
         color = 0;
@@ -82,6 +84,10 @@ public class Animal implements WorldElement {
     public void setEnergyLevel(int newEnergyLevel)
     {
         energyLevel = newEnergyLevel;
+    }
+    public void setMatingEnergy(int mEnergy)
+    {
+        matingEnergy = mEnergy;
     }
     public void addEnergy(int energy)
     {
@@ -155,8 +161,10 @@ public class Animal implements WorldElement {
         Genes childGenes = new Genes();
         // Geny z energii w self i other
         childGenes.combineGenes(energyLevel,other.getEnergyLevel(),genes,other.getGenes());
+        Animal child = new Animal(ThreadLocalRandom.current().nextInt(0,9),currentPosition,color,maxEnergyLevel,childGenes);
+        child.setEnergyLevel(2*matingEnergy);
         // TODO - Random position for now, to be discussed
-        return new Animal(ThreadLocalRandom.current().nextInt(0,9),currentPosition,color,maxEnergyLevel,childGenes);
+        return child;
     }
     public void eat(Plant plant)
     {

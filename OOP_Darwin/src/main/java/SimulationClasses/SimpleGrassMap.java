@@ -3,6 +3,7 @@ package SimulationClasses;
 import BaseClasses.Boundary;
 import BaseClasses.Vector2d;
 import Enums.MapDirection;
+import Enums.MapType;
 import Interfaces.MapChangeListener;
 import Interfaces.WorldElement;
 import Interfaces.WorldMap;
@@ -11,26 +12,40 @@ import java.util.*;
 
 public class SimpleGrassMap implements WorldMap {
     private Boundary currentBounds;
-    private final Map<Vector2d, Plant> plants;
+    BasicPlantManager plantsManager;
     private final Map<Vector2d,List<Animal>> animals;
     List<MapChangeListener> listeners;
     private int daysCount;
+    public SimpleGrassMap(SimulationParameters parameters)
+    {
+        currentBounds = new Boundary(new Vector2d(0,0), new Vector2d(parameters.mapWidth(),parameters.mapHeight()));
+        daysCount = 0;
+        animals = new HashMap<>();
+        if(parameters.mapVariant() == MapType.CreepingJungle)
+        {
+            plantsManager = new CreepingJunglePlantsManager();
+        }
+        else
+        {
+            plantsManager = new BasicPlantManager();
+        }
+    }
     public SimpleGrassMap()
     {
-        plants = new HashMap<>();
+        plantsManager = new CreepingJunglePlantsManager();
         animals = new HashMap<>();
         daysCount = 0;
     }
     public SimpleGrassMap(Boundary boundary)
     {
-        plants = new HashMap<>();
+        plantsManager = new CreepingJunglePlantsManager();
         animals = new HashMap<>();
         daysCount = 0;
         currentBounds = boundary;
     }
     public SimpleGrassMap(Boundary boundary,List<Animal> newAnimals)
     {
-        plants = new HashMap<>();
+        plantsManager = new CreepingJunglePlantsManager();
         animals = new HashMap<>();
         addAnimals(newAnimals);
         daysCount = 0;
@@ -74,11 +89,6 @@ public class SimpleGrassMap implements WorldMap {
         animals.remove(animal.getPosition());
         animalsAtPosition.add(animal);
         animals.putIfAbsent(animal.getPosition(),animalsAtPosition);
-    }
-
-    public void placePlant(Plant plant, Vector2d position)
-    {
-        plants.putIfAbsent(position,plant);
     }
 
     @Override
@@ -127,8 +137,8 @@ public class SimpleGrassMap implements WorldMap {
             if (animalPlace != null && !animalPlace.isEmpty()) {
                 orderAnimals(animalPlace);
                 // Feed the first animal in the sorted list
-                animalPlace.getFirst().eat(plants.get(key));
-                plants.remove(key);
+                animalPlace.getFirst().eat(plantsManager.getPlants().get(key));
+                plantsManager.removePlant(key);
             }
         }
     }

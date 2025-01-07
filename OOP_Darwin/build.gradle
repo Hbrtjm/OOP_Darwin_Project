@@ -1,7 +1,4 @@
 plugins {
-    id 'org.openjfx.javafxplugin' version '0.0.13'
-    id 'application'
-    id 'java'
     id 'groovy'
 }
 
@@ -12,12 +9,6 @@ repositories {
     mavenCentral()
 }
 
-javafx {
-    version = "17"
-    modules = ['javafx.base', 'javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.media', 'javafx.swing', 'javafx.web']
-}
-
-
 dependencies {
     implementation 'org.apache.groovy:groovy:4.0.14'
     testImplementation platform('org.junit:junit-bom:5.10.0')
@@ -26,20 +17,4 @@ dependencies {
 
 test {
     useJUnitPlatform()
-}
-
-application {
-    getMainClass().set('Main')
-}
-
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
-    }
-}
-
-compileJava.options.encoding = 'UTF-8'
-
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
 }
