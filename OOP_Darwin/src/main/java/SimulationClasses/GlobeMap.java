@@ -10,10 +10,7 @@ import Interfaces.WorldMap;
 
 import java.util.*;
 
-public class GlobeMap implements WorldMap  {
-    private Boundary currentBounds;
-    private final Map<Vector2d, Plant> plants;
-    private final Map<Vector2d,List<Animal>> animals;
+public class GlobeMap extends SimpleGrassMap  {
     List<MapChangeListener> listeners;
     private int daysCount;
     public GlobeMap()
@@ -85,7 +82,7 @@ public class GlobeMap implements WorldMap  {
     }
 
     @Override
-    public void move(Animal animal, MapDirection direction) {
+    public void move(Animal animal) {
         animal.moveNextOnGlobeMap(currentBounds);
     }
     public void deleteCorpses()
@@ -102,6 +99,7 @@ public class GlobeMap implements WorldMap  {
             }
         }
     }
+    @Override
     public void moveAll()
     {
         for(Vector2d key: animals.keySet())
@@ -110,94 +108,6 @@ public class GlobeMap implements WorldMap  {
             {
                 animal.moveNextOnGlobeMap(currentBounds);
             }
-        }
-    }
-    private void orderAnimals(List<Animal> animals)
-    {
-        // Practically a radix sort - start from the least significant property
-        // The least significant is the kids count
-        animals.sort(Comparator.comparingInt(Animal::getChildrenCount));
-        // The second factor is the age
-        animals.sort(Comparator.comparingInt(Animal::getAge));
-        // The primary factor is energy level
-        animals.sort(Comparator.comparingInt(Animal::getEnergyLevel));
-    }
-    public void feedAll()
-    {
-        for(Vector2d key : animals.keySet())
-        {
-            List<Animal> animalPlace = animals.get(key);
-            if (animalPlace != null && !animalPlace.isEmpty()) {
-                orderAnimals(animalPlace);
-                // Feed the first animal in the sorted list
-                animalPlace.getFirst().eat(plants.get(key));
-                plants.remove(key);
-            }
-        }
-    }
-    public void mateAll()
-    {
-        for(Vector2d key : animals.keySet())
-        {
-            List<Animal> animalPlace = animals.get(key);
-            List<Animal> kids = new ArrayList<>();
-            if (animalPlace != null && !animalPlace.isEmpty()) {
-                orderAnimals(animalPlace);
-                for (int i = 0; i < animalPlace.size(); i += 2) {
-                    Animal newKid = animalPlace.get(i).mate(animalPlace.get(i + 1));
-                    kids.add(newKid);
-                }
-                animals.remove(key);
-                animalPlace.addAll(kids);
-                animals.putIfAbsent(key,animalPlace);
-            }
-        }
-    }
-    @Override
-    public boolean isOccupied(Vector2d position) {
-        return animals.get(position) != null && animals.get(position) instanceof Animal;
-    }
-    @Override
-    public List<Animal> getAnimalsAtPosition(Vector2d position)
-    {
-        return animals.get(position);
-    }
-    @Override
-    public Collection<WorldElement> objectsAt()
-    {
-        List<WorldElement> combined = new ArrayList<>();
-        combined.addAll((Collection<? extends WorldElement>)plants.values());
-
-        combined.addAll((Collection<? extends WorldElement>)animals.values());
-
-        return combined;
-    }
-    @Override
-    public void initialState()
-    {
-        mapChanged("Initial state");
-    }
-    @Override
-    public void frame()
-    {
-        deleteCorpses();
-        moveAll();
-        feedAll();
-        mateAll();
-        daysCount++;
-        mapChanged("Day " + daysCount);
-    }
-    @Override
-    public boolean canMoveTo(Vector2d position)
-    {
-        // TODO and to be discussed
-        return true;
-    }
-    public void mapChanged(String change)
-    {
-        for(MapChangeListener listener : listeners)
-        {
-            listener.update(change);
         }
     }
 }

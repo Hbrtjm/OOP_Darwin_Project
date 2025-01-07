@@ -3,8 +3,14 @@ package ViewClasses;
 import Enums.MapType;
 import Enums.MutationType;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import SimulationClasses.SimulationParameters;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class SimulationParametersController {
     @FXML private TextField mapWidthField;
@@ -34,6 +40,7 @@ public class SimulationParametersController {
 
     @FXML
     private void initialize() {
+        ExecutorService threadPoolExecutor = Executors.newFixedThreadPool(4);
         mapVariantComboBox.getItems().setAll(MapType.values());
         mutationVariantComboBox.getItems().setAll(MutationType.values());
 
@@ -62,7 +69,6 @@ public class SimulationParametersController {
             }
         });
     }
-
     @FXML
     private void handleSubmit() {
         try {
@@ -89,7 +95,23 @@ public class SimulationParametersController {
             );
 
             System.out.println("Parameters submitted: " + parameters);
-
+            threadPoolExecutor.submit(() -> Platform.runLater(() -> {
+                try {
+                    Stage newStage = new Stage();
+                    FXMLLoader loader = new FXMLLoader();
+                    loader.setLocation(getClass().getResource("/LaunchWindow.fxml"));
+                    BorderPane viewRoot = loader.load();
+                    configureStage(newStage, viewRoot);
+                    SimulationWindowPresenter presenter = loader.getController();
+                    presenter.setParameters(parameters);
+                    presenter.setWorldMap();
+                    newGrassField.registerListener(presenter);
+                    presenter.initializeWithArgs(args);
+                    newStage.show();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }));
         } catch (Exception e) {
             // Handle invalid input and show error to the user
             System.err.println("Invalid input: " + e.getMessage());

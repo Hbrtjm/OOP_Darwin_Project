@@ -2,23 +2,19 @@ package Interfaces;
 
 import BaseClasses.Vector2d;
 import SimulationClasses.Animal;
-import Enums.MapDirection;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import BaseClasses.Boundary;
 
-public interface WorldMap extends MoveValidator {
+public interface WorldMap {
     int getID();
     Boundary getCurrentBounds();
 
     void place(Animal animal);
 
-    void move(Animal animal, MapDirection direction);
-
-    boolean isOccupied(Vector2d position);
+    void move(Animal animal);
 
     List<Animal> getAnimalsAtPosition(Vector2d position);
 
