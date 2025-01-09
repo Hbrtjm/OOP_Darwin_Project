@@ -1,5 +1,7 @@
 package ViewClasses;
 
+import Enums.MapType;
+import SimulationClasses.Simulation;
 import SimulationClasses.SimulationParameters;
 
 public class SimulationWindowPresenter {
@@ -8,8 +10,16 @@ public class SimulationWindowPresenter {
     {
         parameters = sParameters;
     }
-    public void setWorldMap()
+    public void setWorldMap(MapType mapVariant)
     {
+
+    }
+
+    public void initializeWithParameters(SimulationParameters sParametes)
+    {
+        Simulation simulation = new Simulation(sParametes);
+        Thread simulationThread = new Thread(simulation);
+        simulationThread.start();
 
     }
 }

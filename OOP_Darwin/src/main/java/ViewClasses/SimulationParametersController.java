@@ -2,13 +2,16 @@ package ViewClasses;
 
 import Enums.MapType;
 import Enums.MutationType;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import SimulationClasses.SimulationParameters;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -37,10 +40,10 @@ public class SimulationParametersController {
     @FXML private ComboBox<MutationType> mutationVariantComboBox;
     @FXML private TextField genomeLengthField;
     @FXML private Slider genomeLengthSlider;
-
+    ExecutorService threadPoolExecutor = Executors.newFixedThreadPool(4);
     @FXML
     private void initialize() {
-        ExecutorService threadPoolExecutor = Executors.newFixedThreadPool(4);
+
         mapVariantComboBox.getItems().setAll(MapType.values());
         mutationVariantComboBox.getItems().setAll(MutationType.values());
 
@@ -55,6 +58,15 @@ public class SimulationParametersController {
         bindSliderToTextField(maxMutationsSlider, maxMutationsField);
         bindSliderToTextField(genomeLengthSlider, genomeLengthField);
     }
+
+    private void configureStage(Stage primaryStage, BorderPane viewRoot) {
+        var scene = new Scene(viewRoot);
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("Simulation app");
+        primaryStage.minWidthProperty().bind(viewRoot.minWidthProperty());
+        primaryStage.minHeightProperty().bind(viewRoot.minHeightProperty());
+    }
+
 
     private void bindSliderToTextField(Slider slider, TextField textField) {
         slider.valueProperty().addListener((obs, oldValue, newValue) ->
@@ -104,9 +116,9 @@ public class SimulationParametersController {
                     configureStage(newStage, viewRoot);
                     SimulationWindowPresenter presenter = loader.getController();
                     presenter.setParameters(parameters);
-                    presenter.setWorldMap();
-                    newGrassField.registerListener(presenter);
-                    presenter.initializeWithArgs(args);
+                    presenter.setWorldMap(mapVariant);
+                    mapVariant.registerListener(presenter); //TODO - gdzie to zaimplementować?
+                    presenter.initializeWithParameters(parameters);
                     newStage.show();
                 } catch (IOException e) {
                     e.printStackTrace();
