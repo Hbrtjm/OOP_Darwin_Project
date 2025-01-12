@@ -254,7 +254,9 @@ public class SimulationParametersController {
                     SimulationWindowPresenter presenter = loader.getController();
                     presenter.setParameters(parameters);
                     WorldMap map = MapType.matchMap(parameters.mapVariant(),parameters);
+                    System.out.println("Creating a listener");
                     map.registerListener(presenter);
+                    System.out.println(map.toString());
                     presenter.setWorldMap(map);
                     presenter.initialize(parameters);
                     map.registerListener(presenter);

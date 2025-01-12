@@ -17,18 +17,16 @@ import static org.junit.jupiter.api.Assertions.*;
 public class BasicPlantManagerTest {
 
     private BasicPlantManager plantManager;
-    private Map<Vector2d, Plant> plants;
     private Boundary boundary;
 
     @Test
     public void testGrowPlantsWithPreference_DistributesPlantsCorrectly() {
-        plants = new HashMap<>();
         boundary = new Boundary(new Vector2d(0, 0), new Vector2d(10, 10));
-
         plantManager = new BasicPlantManager(boundary);
         plantManager.setMaxAddPlant(10);
         int initialPlantCount = plantManager.getPlants().size();
         plantManager.growPlants();
+
         int finalPlantCount = plantManager.getPlants().size();
         assertNotEquals(0, finalPlantCount);
         assertTrue(finalPlantCount > initialPlantCount, "Plants should grow.");
@@ -47,7 +45,6 @@ public class BasicPlantManagerTest {
 
     @Test
     public void growPlantsRandomizedTest() {
-        plants = new HashMap<>();
         boundary = new Boundary(new Vector2d(0, 0), new Vector2d(10, 10));
 
         plantManager = new BasicPlantManager(boundary);
@@ -69,7 +66,6 @@ public class BasicPlantManagerTest {
 
     @Test
     public void testSetAndGetMaxAddPlant() {
-        plants = new HashMap<>();
         boundary = new Boundary(new Vector2d(0, 0), new Vector2d(10, 10));
 
         plantManager = new BasicPlantManager(boundary);
@@ -80,14 +76,11 @@ public class BasicPlantManagerTest {
 
     @Test
     public void testRemovePlant() {
-        plants = new HashMap<>();
         boundary = new Boundary(new Vector2d(0, 0), new Vector2d(10, 10));
 
         plantManager = new BasicPlantManager(boundary);
         plantManager.setMaxAddPlant(10);
         Vector2d plantPosition = new Vector2d(2, 2);
-        plants.put(plantPosition, new Grass());
-
         plantManager.removePlant(plantPosition);
 
         assertNull(plantManager.plantAt(plantPosition), "Plant should be removed.");
@@ -95,7 +88,6 @@ public class BasicPlantManagerTest {
 
     @Test
     public void testGetRegions() {
-        plants = new HashMap<>();
         boundary = new Boundary(new Vector2d(0, 0), new Vector2d(10, 10));
 
         plantManager = new BasicPlantManager(boundary);
@@ -109,7 +101,6 @@ public class BasicPlantManagerTest {
 
     @Test
     public void testSetAndGetEquator() {
-        plants = new HashMap<>();
         boundary = new Boundary(new Vector2d(0, 0), new Vector2d(10, 10));
 
         plantManager = new BasicPlantManager(boundary);
@@ -124,7 +115,6 @@ public class BasicPlantManagerTest {
 
     @Test
     public void testSetAndGetHemispheres() {
-        plants = new HashMap<>();
         boundary = new Boundary(new Vector2d(0, 0), new Vector2d(10, 10));
 
         plantManager = new BasicPlantManager(boundary);

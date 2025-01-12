@@ -9,7 +9,6 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class BasicPlantManager extends AbstractPlantManager {
-
     public BasicPlantManager(Boundary boundary) {
         super();
         setBoundary(boundary);
@@ -17,9 +16,10 @@ public class BasicPlantManager extends AbstractPlantManager {
     }
 
     public void growPlantsWithPreference() {
-        int bias = (int)(maxChangeOfPlants/2);
-        this.growPlantsRandomized(equator, ThreadLocalRandom.current().nextInt(bias,maxChangeOfPlants+1));
-        this.growPlantsRandomized(hemispheres, maxChangeOfPlants-bias);
+        double equatorPreferenceFactor = 0.6;
+        int bias = (int)(maxChangeOfPlants* equatorPreferenceFactor);
+        int grown = this.growPlantsRandomized(equator, ThreadLocalRandom.current().nextInt(bias,maxChangeOfPlants+1));
+        this.growPlantsRandomized(hemispheres, maxChangeOfPlants-grown);
     }
 
     @Override

@@ -3,6 +3,7 @@ package Interfaces;
 import BaseClasses.Vector2d;
 import SimulationClasses.Animal;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -13,7 +14,7 @@ public interface WorldMap {
     int getID();
     Boundary getCurrentBounds();
     void move(Animal animal);
-    List<Animal> getAnimalsAtPosition(Vector2d position);
+    ArrayList<Animal> getAnimalsAtPosition(Vector2d position);
     Plant plantAt(Vector2d position);
     Collection<WorldElement> objectsAt();
     void initialState();

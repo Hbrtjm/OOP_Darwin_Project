@@ -5,17 +5,19 @@ import BaseClasses.ListRandomizer;
 import BaseClasses.Vector2d;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class CreepingJunglePlantsManager extends AbstractPlantManager {
-    private Map<Integer, List<Vector2d>> neighborCounts;
+    private final Map<Integer, List<Vector2d>> neighborCounts;
 
     public CreepingJunglePlantsManager(Boundary boundary) {
         super();
         this.setBoundary(boundary);
         this.getRegions();
+        neighborCounts = new HashMap<Integer, List<Vector2d>>();
     }
 
     private Integer countNeighbors(Vector2d position) {
@@ -46,15 +48,15 @@ public class CreepingJunglePlantsManager extends AbstractPlantManager {
         sortPositions(freePositions);
         int plantsGrown = 0;
         int maxPlantsLeft = maxChangeOfPlants;
-        double maxBias = 0.5;
+        double maxBias = 1;
         int bias = (int) (maxChangeOfPlants * maxBias);
-
+        int grown;
         for (int i = 8; i >= 0; i--) {
             ArrayList<Vector2d> positions = (ArrayList<Vector2d>) neighborCounts.get(i);
             if (positions != null) {
                 int growLimit = Math.min(ThreadLocalRandom.current().nextInt(bias, maxChangeOfPlants + 1),maxPlantsLeft);
-                maxPlantsLeft -= growLimit;
-                super.growPlantsRandomized(positions,growLimit);
+                grown = super.growPlantsRandomized(positions,growLimit);
+                maxPlantsLeft -= grown;
                 int biasReduction = (int) (maxChangeOfPlants * (maxBias / 8));
                 bias = Math.max(0, bias - biasReduction);
             }

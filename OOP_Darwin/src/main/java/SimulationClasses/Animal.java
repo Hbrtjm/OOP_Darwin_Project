@@ -45,7 +45,8 @@ public class Animal implements WorldElement {
 
     public Animal(Integer direction, Vector2d position, int maxEnergy, int genesAmount, int matingEnergy, MutationType mutationType, BehaviourType behaviourType)
     {
-        this();
+        super();
+        genes = new Genes(mutationType.getMutationBehavior());
         if(maxEnergy > 0) {
             maxEnergyLevel = maxEnergy;
         }

@@ -9,7 +9,6 @@ import java.util.*;
 
 public class GlobeMap extends GrassMap {
     List<MapChangeListener> listeners;
-    private int daysCount;
     public GlobeMap()
     {
         super();
@@ -50,15 +49,6 @@ public class GlobeMap extends GrassMap {
     }
     public GlobeMap(SimulationParameters parameters) {
         super(parameters);
-    }
-    @Override
-    public int getID() {
-        return 0;
-    }
-
-    public void setCurrentBounds(Boundary boundary)
-    {
-        currentBounds = boundary;
     }
 
     @Override

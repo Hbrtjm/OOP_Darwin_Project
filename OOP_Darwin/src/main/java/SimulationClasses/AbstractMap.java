@@ -12,8 +12,8 @@ abstract public class AbstractMap implements WorldMap {
     protected Boundary currentBounds;
     protected PlantsManager plantsManager;
     protected Map<Vector2d, ArrayList<Animal>> animals;
-    protected List<MapChangeListener> listeners;
-    private int daysCount;
+    protected int daysCount;
+    protected final List<MapChangeListener> subscribers;
 
     @Override
     public void setBoundary(Boundary givenBoundary)
@@ -22,11 +22,10 @@ abstract public class AbstractMap implements WorldMap {
     }
 
     @Override
-    public List<Animal> getAnimalsAtPosition(Vector2d position)
+    public ArrayList<Animal> getAnimalsAtPosition(Vector2d position)
     {
         return animals.get(position);
     }
-    private final List<MapChangeListener> subscribers;
     public List<MapChangeListener> getSubscribers()
     {
         return subscribers;
@@ -39,7 +38,6 @@ abstract public class AbstractMap implements WorldMap {
         currentBounds = new Boundary(new Vector2d(0,0), new Vector2d(10,10));
         plantsManager = new CreepingJunglePlantsManager(currentBounds);
         this.animals = new HashMap<>();
-        this.listeners = new ArrayList<>();
         this.daysCount = 0;
         this.subscribers = new ArrayList<>();
     }
@@ -161,13 +159,14 @@ abstract public class AbstractMap implements WorldMap {
         moveAll();
         feedAll();
         mateAll();
+        plantsManager.growPlants();
         daysCount++;
         mapChanged("Day " + daysCount);
     }
 
     public void mapChanged(String change) {
-        for (MapChangeListener listener : listeners) {
-            listener.mapChanged(change);
+        for (MapChangeListener subscriber : subscribers) {
+            subscriber.mapChanged(change);
         }
     }
     @Override
@@ -180,6 +179,7 @@ abstract public class AbstractMap implements WorldMap {
 
         return combined;
     }
+
     @Override
     public Plant plantAt(Vector2d position)
     {

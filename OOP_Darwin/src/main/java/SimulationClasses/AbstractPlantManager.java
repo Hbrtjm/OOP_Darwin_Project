@@ -34,7 +34,9 @@ abstract public class AbstractPlantManager implements PlantsManager {
     public void setBoundary(Boundary givenBoundary) {
         boundary = givenBoundary;
     }
+
     public Boundary getBoundary(){ return boundary; }
+
     private boolean inPreferredRegion(Vector2d position)
     {
         int top = boundary.upper().getY();
@@ -47,8 +49,8 @@ abstract public class AbstractPlantManager implements PlantsManager {
 
     protected void getRegions()
     {
-        for (int i = boundary.lower().getX(); i <= boundary.upper().getX(); i++) {
-            for (int j = boundary.lower().getY(); j <= boundary.upper().getY(); j++) {
+        for (int i = boundary.lower().getX(); i < boundary.upper().getX(); i++) {
+            for (int j = boundary.lower().getY(); j < boundary.upper().getY(); j++) {
                 Vector2d currentPos = new Vector2d(i, j);
                 if (!plants.containsKey(currentPos)) {
                     if(inPreferredRegion(currentPos))
@@ -85,18 +87,26 @@ abstract public class AbstractPlantManager implements PlantsManager {
     }
 
     @Override
-    public void growPlantsRandomized(ArrayList<Vector2d> availableSpaces, int plantAmount) {
+    public int growPlantsRandomized(ArrayList<Vector2d> availableSpaces, int plantAmount) {
         /*
         Randomly adds *plantAmount* plants from the given list.
          */
-        ListRandomizer<Vector2d> randomizer = new ListRandomizer<Vector2d>(availableSpaces);
+        int grown = 0;
+        ListRandomizer<Vector2d> randomizer = new ListRandomizer<>(availableSpaces);
         for (int i = 0; i < plantAmount && randomizer.hasNext(); i++) {
-            plants.putIfAbsent(randomizer.next(), new Grass());
+            Vector2d place = randomizer.next();
+            if(!plants.containsKey(place))
+            {
+                grown++;
+            }
+            plants.putIfAbsent(place, new Grass());
         }
+        return grown;
     }
     @Override
     public Plant plantAt(Vector2d position)
     {
+//        System.out.println(plants.size());
         return plants.get(position);
     }
 }
