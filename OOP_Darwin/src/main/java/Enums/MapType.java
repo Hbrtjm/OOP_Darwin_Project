@@ -1,9 +1,9 @@
 package Enums;
 
 import Interfaces.WorldMap;
-import SimulationClasses.CreepingJungleMap;
+//import SimulationClasses.CreepingJungleMap;
 import SimulationClasses.GlobeMap;
-import SimulationClasses.Simulation;
+import SimulationClasses.GrassMap;
 import SimulationClasses.SimulationParameters;
 
 public enum MapType {
@@ -14,7 +14,7 @@ public enum MapType {
         return switch (mapType)
         {
             case Globe -> new GlobeMap(simulationParameters);
-            case CreepingJungle -> new CreepingJungleMap(simulationParameters);
+            case CreepingJungle -> new GrassMap(simulationParameters);
         };
     }
 }

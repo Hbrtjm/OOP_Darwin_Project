@@ -1,6 +1,6 @@
 package SimulationClasses;
 
-
+import Interfaces.Mutation;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -10,7 +10,18 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Genes implements Serializable, Iterable<Integer>, Iterator<Integer> {
     private int currentGene = 0;
     private List<Integer> genesList;
-    Mutation mutation;
+    private final Mutation mutation;
+
+    public Genes(Mutation mutationType) {
+        genesList = new ArrayList<>();
+        this.mutation = mutationType;
+    }
+
+    public Genes(Genes other) {
+        this.genesList = new ArrayList<>(other.genesList); // Deep copy of the gene list
+        this.mutation = other.mutation;                   // Reference the same mutation
+    }
+
     public void generateGenes(int genesAmount)
     {
         List<Integer> newGenes = new ArrayList<>();
@@ -19,6 +30,15 @@ public class Genes implements Serializable, Iterable<Integer>, Iterator<Integer>
         }
         genesList = newGenes;
     }
+
+    public void mutateGenes() {
+        mutation.mutate(new ArrayList<>(genesList));
+    }
+
+    public void setCurrentGene(int geneIndex) {
+        currentGene = geneIndex;
+    }
+
     @Override
     public Iterator<Integer> iterator() {
         // TODO - Implement iterator
@@ -53,6 +73,7 @@ public class Genes implements Serializable, Iterable<Integer>, Iterator<Integer>
 
     public void combineGenes(int firstParentEnergyAmount, int secondParentEnergyAmount, Genes firstParentGenes, Genes secondParentGenes)
     {
+        // Failsafe, considering that the animals will be sorted by energy, this should not be used
         if(firstParentEnergyAmount < secondParentEnergyAmount)
         {
             Genes tempGenes = firstParentGenes;
@@ -63,13 +84,17 @@ public class Genes implements Serializable, Iterable<Integer>, Iterator<Integer>
             secondParentEnergyAmount = tempAmount;
         }
         int combinedEnergy = firstParentEnergyAmount + secondParentEnergyAmount;
-        int firstGenesAmount = firstParentEnergyAmount/combinedEnergy*firstParentGenes.getGenesAmount();
-        int secondGenesAmount = firstParentEnergyAmount/combinedEnergy*secondParentGenes.getGenesAmount();
+        double dominantFraction = (double) firstParentEnergyAmount / combinedEnergy;
+
+        int firstGenesAmount = (int) (dominantFraction * firstParentGenes.getGenesAmount());
+
+        int secondGenesAmount = (int) ((1-dominantFraction) * secondParentGenes.getGenesAmount());
+
         int leftOrRight = ThreadLocalRandom.current().nextInt(0, 2);
-        int leftAmount =  0;
-        int rightAmount =  0;
-        Genes leftGenes =  null;
-        Genes rightGenes = null;
+        int leftAmount;
+        int rightAmount;
+        Genes leftGenes;
+        Genes rightGenes;
         if(leftOrRight == 0)
         {
             // Left side of genes of the stronger animal, right side of the weaker

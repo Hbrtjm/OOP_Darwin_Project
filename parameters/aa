@@ -1,0 +1,1 @@
+{"mapWidth":125,"mapHeight":6,"mapVariant":"Globe","initialPlantCount":7,"plantEnergy":7,"dailyPlantGrowth":7,"initialAnimalCount":7,"initialAnimalEnergy":7,"energyRequiredToBeFed":7,"energyUsedForReproduction":7,"minMutations":7,"maxMutations":7,"mutationVariant":"GENE_SWITCH","genomeLength":21,"behaviourType":"FULLY_DETERMINISTIC"}

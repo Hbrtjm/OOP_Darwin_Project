@@ -1,0 +1,1 @@
+{"mapWidth":12,"mapHeight":12,"mapVariant":"CreepingJungle","initialPlantCount":7,"plantEnergy":7,"dailyPlantGrowth":7,"initialAnimalCount":7,"initialAnimalEnergy":7,"energyRequiredToBeFed":7,"energyUsedForReproduction":7,"minMutations":7,"maxMutations":7,"mutationVariant":"RANDOM","genomeLength":23,"behaviourType":"FULLY_DETERMINISTIC"}

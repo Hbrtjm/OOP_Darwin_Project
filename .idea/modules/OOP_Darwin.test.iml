@@ -4,15 +4,28 @@
     <output-test url="file://$MODULE_DIR$/../../OOP_Darwin/build/classes/java/test" />
     <exclude-output />
     <content url="file://$MODULE_DIR$/../../OOP_Darwin/src/test">
-      <sourceFolder url="file://$MODULE_DIR$/../../OOP_Darwin/src/test/groovy" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/../../OOP_Darwin/src/test/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/../../OOP_Darwin/src/test/resources" type="java-test-resource" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="OOP_Darwin.main" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-fxml:win:17" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-web:win:17" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-controls:17" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-controls:win:17" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-media:17" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-media:win:17" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-swing:win:17" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-graphics:17" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-graphics:win:17" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-base:17" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-base:win:17" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.groovy:groovy:4.0.14" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-core:2.15.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-databind:2.15.2" level="project" />
     <orderEntry type="library" name="Gradle: org.junit.jupiter:junit-jupiter:5.10.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-annotations:2.15.2" level="project" />
     <orderEntry type="library" name="Gradle: org.junit.jupiter:junit-jupiter-params:5.10.0" level="project" />
     <orderEntry type="library" name="Gradle: org.junit.jupiter:junit-jupiter-api:5.10.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Gradle: org.apiguardian:apiguardian-api:1.1.2" level="project" />

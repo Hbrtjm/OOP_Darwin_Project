@@ -1,5 +1,6 @@
 package SimulationClasses;
 
+import Enums.BehaviourType;
 import Enums.MapType;
 import Enums.MutationType;
 
@@ -17,5 +18,6 @@ public record SimulationParameters (
         int minMutations,
         int maxMutations,
         MutationType mutationVariant,
-        int genomeLength
+        int genomeLength,
+        BehaviourType behaviourType
 ) {}

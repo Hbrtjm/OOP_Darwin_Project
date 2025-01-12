@@ -7,7 +7,9 @@ import java.util.concurrent.ThreadLocalRandom;
 import BaseClasses.Boundary;
 import BaseClasses.MoveTranslator;
 import BaseClasses.Vector2d;
+import Enums.BehaviourType;
 import Enums.MapDirection;
+import Enums.MutationType;
 import Interfaces.WorldElement;
 
 // F2
@@ -16,6 +18,7 @@ public class Animal implements WorldElement {
     private List<Animal> children;
     public int color;
     private int energyLevel = 150;
+    private MutationType mutation;
     // If the maxEnergyLevel value can be universal, then we can make it a static
     private static int maxEnergyLevel;
     private Vector2d currentPosition;
@@ -28,30 +31,25 @@ public class Animal implements WorldElement {
     {
         return genes;
     }
-    public boolean equals()
-    {
-        return true; // For now
-    }
-
+    private BehaviourType behaviour;
     public Animal()
     {
+//        genes = new Genes();
         color = 0;
         int genesAmount = ThreadLocalRandom.current().nextInt(1, 101);
-        genes = new Genes();
         genes.generateGenes(genesAmount);
         maxEnergyLevel = Integer.MAX_VALUE;
         currentDirection = 0;
         currentPosition = new Vector2d(2, 2);
     }
-    public Animal(Integer direction, Vector2d position,Integer animalColor,int maxEnergy, int genesAmount)
+
+    public Animal(Integer direction, Vector2d position, int maxEnergy, int genesAmount, int matingEnergy, MutationType mutationType, BehaviourType behaviourType)
     {
         this();
-        if(animalColor != null){
-            color = animalColor;
-        }
         if(maxEnergy > 0) {
             maxEnergyLevel = maxEnergy;
         }
+        setEnergyLevel(maxEnergyLevel);
         if(direction != null)
         {
             currentDirection = direction;
@@ -61,78 +59,94 @@ public class Animal implements WorldElement {
             currentPosition = position;
         }
         if(genesAmount > 0) {
-            genes = new Genes();
+//            genes = new Genes();
             genes.generateGenes(genesAmount);
         }
+        if(matingEnergy > 0) {
+            setMatingEnergy(matingEnergy);
+        }
+        behaviour = behaviourType;
+        mutation = mutationType;
     }
-    public Animal(Integer direction, Vector2d position,Integer animalColor,int maxEnergy,Genes inheritedGenes)
+
+    public Animal(Integer direction, Vector2d position, int maxEnergy, Genes inheritedGenes, int matingEnergy, MutationType mutationType, BehaviourType behaviourType)
     {
-        this(direction, position,animalColor,maxEnergy,0);
         if(inheritedGenes != null)
         {
-            genes = inheritedGenes;
+//            genes = inheritedGenes;
         }
+//        this(direction,position,maxEnergy,inheritedGenes.getGenesAmount(),matingEnergy,mutationType);
     }
+
     public int getEnergyLevel()
     {
         return energyLevel;
     }
+
     public int getAge() { return age; }
     public List<Animal> getChildren() { return children; }
     public int getChildrenCount() { return children.size(); }
     public void setMaxEnergyLevel(int newMaxEnergyLevel) { maxEnergyLevel = newMaxEnergyLevel; }
+
     public void setEnergyLevel(int newEnergyLevel)
     {
         energyLevel = newEnergyLevel;
     }
+
     public void setMatingEnergy(int mEnergy)
     {
         matingEnergy = mEnergy;
     }
+
     public void addEnergy(int energy)
     {
         energyLevel = Math.min(maxEnergyLevel,energy+energyLevel);
     }
+
     public void subtractEnergy(int energy)
     {
         energyLevel = Math.max(0,energyLevel-energy);
     }
+
     public MapDirection getCurrentDirection()
     {
         return MoveTranslator.TranslateOne(currentDirection);
     }
+
     public Integer getCurrentDirectionInteger() { return currentDirection; }
+
     public boolean isAt(Vector2d position) {
         return currentPosition.equals(position);
     }
+
     public void setPositionAndDirection(Vector2d newPosition, int directionChange)
     {
         currentPosition = newPosition;
         currentDirection = (currentDirection+directionChange)%8;
     }
+
     @Override
     public Vector2d getPosition()
     {
         return currentPosition;
     }
+
     public void moveNext(Boundary boundary)
     {
         // One-liner to be changed, but looks funny for now...
-        currentDirection = MapDirection.changeDirection(currentDirection,genes.next());
+        currentDirection = MapDirection.changeDirection(currentDirection,behaviour.nextGene(genes));
         currentPosition.add(MoveTranslator.TranslateOne(currentDirection).toUnitVector());
-        if(currentPosition.getY() > boundary.upper().getY() && currentPosition.getY() < boundary.lower().getY())
-        {
-            currentDirection = MapDirection.changeDirection(currentDirection,4);
-        }
         if(!inBounds(currentPosition,boundary))
         {
+            // Gets pushed back if it doesn't comply with the boundary, then turns around
             currentPosition.subtract(MoveTranslator.TranslateOne(currentDirection).toUnitVector());
+            currentDirection = MapDirection.changeDirection(currentDirection,4);
         }
     }
     
     public void moveNextOnGlobeMap(Boundary boundary)
     {
-        currentDirection = MapDirection.changeDirection(currentDirection,genes.next());
+        currentDirection = MapDirection.changeDirection(currentDirection,behaviour.nextGene(genes));
 
         //newPosition is for testing if animal does not go over boundaries
         Vector2d newPosition=new Vector2d(currentPosition.getX(),currentPosition.getY());
@@ -162,24 +176,32 @@ public class Animal implements WorldElement {
     public void moveNextBoundless()
     {
         // One-liner to be changed, but looks funny for now...
-        currentDirection = MapDirection.changeDirection(currentDirection,genes.next());
+        currentDirection = MapDirection.changeDirection(currentDirection,behaviour.nextGene(genes));
         currentPosition.add(MoveTranslator.TranslateOne(currentDirection).toUnitVector());
     }
+
     private boolean inBounds(Vector2d position, Boundary bounds)
     {
         return position.follows(bounds.lower()) && position.precedes(bounds.upper());
     }
-    public void actionBounded(Boundary boundary,Animal other, boolean canEat, Plant plant)
+
+//    PROBASBLY DEPRECATED, MAP HANDLES THE SORTING LOGIC
+//    public void actionBounded(Boundary boundary,Animal other, boolean canEat, Plant plant)
+//    {
+//        moveNext(boundary);
+//        if(other != null) {
+//            mate(other); // I think it should be handled
+//        }
+//        // Same approach, sort and give food to the strongest one
+//        if(canEat)
+//        {
+//            eat(plant);
+//        }
+//    }
+
+    public boolean canMate()
     {
-        moveNext(boundary);
-        if(other != null) {
-            mate(other); // I think it should be handled
-        }
-        // Same approach, sort and give food to the strongest one
-        if(canEat)
-        {
-            eat(plant);
-        }
+        return energyLevel >= matingEnergy;
     }
     // Very stupid, but I would sort every animal
     // that is on designated field and mate them in order
@@ -188,14 +210,20 @@ public class Animal implements WorldElement {
     // on the map
     public Animal mate(Animal other)
     {
-        Genes childGenes = new Genes();
-        // Geny z energii w self i other
+        Genes childGenes = new Genes(mutation.getMutationBehavior());
+
+        // Genes of self and other energy
+        subtractEnergy(matingEnergy);
+        other.subtractEnergy(matingEnergy);
+
         childGenes.combineGenes(energyLevel,other.getEnergyLevel(),genes,other.getGenes());
-        Animal child = new Animal(ThreadLocalRandom.current().nextInt(0,9),currentPosition,color,maxEnergyLevel,childGenes);
-        child.setEnergyLevel(2*matingEnergy);
-        // TODO - Random position for now, to be discussed
-        return child;
+//        Animal child = new Animal(ThreadLocalRandom.current().nextInt(0,9),currentPosition,color,maxEnergyLevel,childGenes);
+//        child.setEnergyLevel(2*matingEnergy);
+
+//        return child;
+        return new Animal();
     }
+
     public void eat(Plant plant)
     {
         addEnergy(plant.getEnergy());
