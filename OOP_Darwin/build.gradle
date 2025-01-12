@@ -1,5 +1,13 @@
 plugins {
-    id 'groovy'
+    id 'org.openjfx.javafxplugin' version '0.0.13'
+    id 'application'
+    id 'java'
+}
+
+
+javafx {
+    version = "17"
+    modules = ['javafx.base', 'javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.media', 'javafx.swing', 'javafx.web']
 }
 
 group = 'org.example'
@@ -11,10 +19,29 @@ repositories {
 
 dependencies {
     implementation 'org.apache.groovy:groovy:4.0.14'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.15.2'
     testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
 }
+
 
 test {
     useJUnitPlatform()
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+}
+compileJava.options.encoding = 'UTF-8'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+
+application {
+    getMainClass().set('Main')
 }

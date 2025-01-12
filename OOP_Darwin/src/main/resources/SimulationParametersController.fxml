@@ -65,9 +65,12 @@
                     <Label text="Mutation Variant:" GridPane.rowIndex="12" GridPane.columnIndex="0" />
                     <ComboBox fx:id="mutationVariantComboBox" GridPane.rowIndex="12" GridPane.columnIndex="1" />
 
-                    <Label text="Genome Length:" GridPane.rowIndex="13" GridPane.columnIndex="0" />
-                    <TextField fx:id="genomeLengthField" GridPane.rowIndex="13" GridPane.columnIndex="1" />
-                    <Slider fx:id="genomeLengthSlider" GridPane.rowIndex="13" GridPane.columnIndex="2" />
+                    <Label text="Behaviour variant:" GridPane.rowIndex="13" GridPane.columnIndex="0" />
+                    <ComboBox fx:id="behaviourTypeComboBox" GridPane.rowIndex="13" GridPane.columnIndex="1" />
+
+                    <Label text="Genome Length:" GridPane.rowIndex="14" GridPane.columnIndex="0" />
+                    <TextField fx:id="genomeLengthField" GridPane.rowIndex="14" GridPane.columnIndex="1" />
+                    <Slider fx:id="genomeLengthSlider" GridPane.rowIndex="14" GridPane.columnIndex="2" />
                 </GridPane>
             </VBox>
         </ScrollPane>
@@ -76,6 +79,12 @@
     <bottom>
         <HBox alignment="CENTER" spacing="10.0" style="-fx-padding: 10px;">
             <Button text="Submit" onAction="#handleSubmit" />
+            <TextField fx:id="saveFileField" />
+            <Button text="Save" onAction="#handleSaveParameters" />
+            <TextField fx:id="loadFileField" />
+            <Button text="Load" onAction="#handleLoadParameters" />
+            <ComboBox fx:id="usedFile" onAction="#handlePickParametersFile" />
+            <Button text="Delete saved files" onAction="#deleteSavedFiles"/>
         </HBox>
     </bottom>
 </BorderPane>

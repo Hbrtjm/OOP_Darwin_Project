@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class ListRandomizer implements Iterator<Vector2d>, Iterable<Vector2d> {
+public class ListRandomizer<T> implements Iterator<T>, Iterable<T> {
 
     private int index = 0;
-    private final List<Vector2d> positions;
+    private final List<T> positions;
 
-    public ListRandomizer(ArrayList<Vector2d> givenPositions) {
+    public ListRandomizer(ArrayList<T> givenPositions) {
         positions = givenPositions;
         randomize();
     }
@@ -20,7 +20,7 @@ public class ListRandomizer implements Iterator<Vector2d>, Iterable<Vector2d> {
     }
 
     @Override
-    public Vector2d next() {
+    public T next() {
         if (!hasNext()) {
             return null;
         }
@@ -28,7 +28,7 @@ public class ListRandomizer implements Iterator<Vector2d>, Iterable<Vector2d> {
     }
 
     @Override
-    public Iterator<Vector2d> iterator() {
+    public Iterator<T> iterator() {
         index = 0; // Reset index for new iteration.
         return this;
     }
@@ -36,7 +36,7 @@ public class ListRandomizer implements Iterator<Vector2d>, Iterable<Vector2d> {
     private void randomize() {
         for (int i = positions.size() - 1; i > 0; i--) {
             int new_index = (int) (Math.random() * (i + 1));
-            Vector2d temp = positions.get(i);
+            T temp = positions.get(i);
             positions.set(i, positions.get(new_index));
             positions.set(new_index, temp);
         }
