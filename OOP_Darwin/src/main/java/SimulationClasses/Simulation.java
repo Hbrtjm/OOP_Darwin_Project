@@ -6,6 +6,7 @@ import Enums.MapType;
 public class Simulation implements Runnable {
     private final WorldMap map;
     private int pauseTime = 500;
+    private boolean running = true;
     public void setPause(int pause)
     {
         pauseTime = pause;
@@ -19,8 +20,7 @@ public class Simulation implements Runnable {
     }
     public void run()
     {
-        int i = 0;
-        while (true) {
+        while (running) {
             map.frame();
             System.out.println("Next frame");
             try {
@@ -28,5 +28,9 @@ public class Simulation implements Runnable {
             } catch (InterruptedException e) {
             }
         }
+    }
+    public void stop()
+    {
+        running = false;
     }
 }

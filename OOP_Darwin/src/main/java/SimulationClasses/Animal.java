@@ -1,5 +1,6 @@
 package SimulationClasses;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -11,11 +12,14 @@ import Enums.BehaviourType;
 import Enums.MapDirection;
 import Enums.MutationType;
 import Interfaces.WorldElement;
+import Interfaces.WorldMap;
 
 // F2
 public class Animal implements WorldElement {
+    private SimulationParameters parameters;
+    private WorldMap map;
     private int age;
-    private List<Animal> children;
+    private List<Animal> children = new ArrayList<>();
     public int color;
     private int energyLevel = 150;
     private MutationType mutation;
@@ -136,13 +140,14 @@ public class Animal implements WorldElement {
     {
         // One-liner to be changed, but looks funny for now...
         currentDirection = MapDirection.changeDirection(currentDirection,behaviour.nextGene(genes));
-        currentPosition.add(MoveTranslator.TranslateOne(currentDirection).toUnitVector());
+        currentPosition = currentPosition.add(MoveTranslator.TranslateOne(currentDirection).toUnitVector());
         if(!inBounds(currentPosition,boundary))
         {
             // Gets pushed back if it doesn't comply with the boundary, then turns around
-            currentPosition.subtract(MoveTranslator.TranslateOne(currentDirection).toUnitVector());
+            currentPosition = currentPosition.subtract(MoveTranslator.TranslateOne(currentDirection).toUnitVector());
             currentDirection = MapDirection.changeDirection(currentDirection,4);
         }
+
     }
     
     public void moveNextOnGlobeMap(Boundary boundary)
@@ -150,7 +155,7 @@ public class Animal implements WorldElement {
         currentDirection = MapDirection.changeDirection(currentDirection,behaviour.nextGene(genes));
 
         //newPosition is for testing if animal does not go over boundaries
-        Vector2d newPosition=new Vector2d(currentPosition.getX(),currentPosition.getY());
+        Vector2d newPosition = new Vector2d(currentPosition.getX(),currentPosition.getY());
         newPosition.add(MoveTranslator.TranslateOne(currentDirection).toUnitVector());
 
         //going over upper/lower boundary
@@ -218,9 +223,10 @@ public class Animal implements WorldElement {
         other.subtractEnergy(matingEnergy);
 
         childGenes.combineGenes(energyLevel,other.getEnergyLevel(),genes,other.getGenes());
-//        Animal child = new Animal(ThreadLocalRandom.current().nextInt(0,9),currentPosition,color,maxEnergyLevel,childGenes);
+        int randomChildDirection = ThreadLocalRandom.current().nextInt(0,9);
+//        Animal child = new Animal(randomChildDirection,currentPosition,maxEnergyLevel,childGenes,parameters.mutationVariant(),parameters.behaviourType());
 //        child.setEnergyLevel(2*matingEnergy);
-
+//
 //        return child;
         return new Animal();
     }

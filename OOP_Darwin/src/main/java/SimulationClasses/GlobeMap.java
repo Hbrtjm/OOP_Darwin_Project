@@ -56,15 +56,17 @@ public class GlobeMap extends GrassMap {
         animal.moveNextOnGlobeMap(currentBounds);
     }
 
-    @Override
-    public void moveAll()
-    {
-        for(Vector2d key: animals.keySet())
-        {
-            for(Animal animal : animals.get(key))
-            {
-                animal.moveNextOnGlobeMap(currentBounds);
-            }
-        }
-    }
+//TODO - ruch animala na globeMap
+
+//    @Override
+//    public void moveAll()
+//    {
+//        for(Vector2d key: animals.keySet())
+//        {
+//            for(Animal animal : animals.get(key))
+//            {
+//                animal.moveNextOnGlobeMap(currentBounds);
+//            }
+//        }
+//    }
 }

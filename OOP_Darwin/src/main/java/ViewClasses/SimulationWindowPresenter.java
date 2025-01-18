@@ -54,6 +54,12 @@ public class SimulationWindowPresenter implements MapChangeListener {
         worldMap = map;
     }
 
+    public void stop()
+    {
+
+        simulation.stop();
+    }
+
     @FXML
     public void handleSliderChange()
     {
@@ -109,6 +115,7 @@ public class SimulationWindowPresenter implements MapChangeListener {
         cell.getChildren().add(circle);
         mapGrid.add(cell, mapCoords.getX(), mapCoords.getY());
     }
+
     private Vector2d nearestBiggestSquare(int n)
     {
         int oddCounter = 1;
@@ -121,6 +128,7 @@ public class SimulationWindowPresenter implements MapChangeListener {
         square = (int) Math.pow((double) (oddCounter - 1) /2,2);
         return new Vector2d(square,square);
     }
+
     private void addAnimals(Vector2d place, Vector2d mapCoords, Pane cell) {
         ArrayList<Animal> animals = worldMap.getAnimalsAtPosition(place);
         if (animals != null) {
@@ -171,8 +179,8 @@ public class SimulationWindowPresenter implements MapChangeListener {
             for (int y = lowerY; y < upperY; y++) {
 //                System.out.println(worldMap.plantAt(new Vector2d(x,y)));
                 addPlantAt(new Vector2d(x,y),new Vector2d(x - lowerX,height - y + lowerY - 1));
-//                if(worldMap.getAnimalsAtPosition(new Vector2d(x,y)) != null)
-//                    addAnimal(new Vector2d(x,y),new Vector2d(x - lowerX,height - y + lowerY - 1), new Vector2d(CELL_WIDTH,CELL_HEIGHT));
+                if(worldMap.getAnimalsAtPosition(new Vector2d(x,y)) != null)
+                    addAnimal(new Vector2d(x,y),new Vector2d(x - lowerX,height - y + lowerY - 1), new Vector2d(CELL_WIDTH,CELL_HEIGHT));
             }
         }
     }

@@ -16,11 +16,13 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javafx.scene.Scene;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javafx.stage.WindowEvent;
 
 import javax.naming.NoPermissionException;
 import javax.swing.event.ChangeEvent;
@@ -68,6 +70,8 @@ public class SimulationParametersController {
     private final String PARAMETERS_DIR = "parameters";
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+
+
     private void configureStage(Stage primaryStage, BorderPane viewRoot)
     {
         var scene = new Scene(viewRoot);
@@ -113,6 +117,12 @@ public class SimulationParametersController {
             filenameToFile.putIfAbsent(file.getName(),file);
             usedFile.getItems().add(file.getName());
         }
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            if (!threadPoolExecutor.isShutdown()) {
+                threadPoolExecutor.shutdownNow();
+            }
+        }));
     }
 
     @FXML
@@ -238,6 +248,7 @@ public class SimulationParametersController {
         genomeLengthField.setText(String.valueOf(parameters.genomeLength()));
     }
 
+
     @FXML
     private void handleSubmit() {
         try {
@@ -261,6 +272,12 @@ public class SimulationParametersController {
                     presenter.initialize(parameters);
                     map.registerListener(presenter);
                     newStage.show();
+
+                    newStage.setOnCloseRequest(event -> {
+                        presenter.stop();
+                        newStage.close();
+
+                    });
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

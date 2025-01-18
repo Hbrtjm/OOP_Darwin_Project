@@ -72,7 +72,7 @@ abstract public class AbstractMap implements WorldMap {
         this.currentBounds = boundary;
     }
 
-    protected void placeAnimal(Animal animal)
+    public void placeAnimal(Animal animal)
     {
         if(animal != null)
         {
@@ -81,6 +81,7 @@ abstract public class AbstractMap implements WorldMap {
                 animals.put(animal.getPosition(), new ArrayList<>());
             }
             animals.get(animal.getPosition()).add(animal);
+            System.out.println("Add");
         }
     }
 
@@ -93,6 +94,7 @@ abstract public class AbstractMap implements WorldMap {
             {
                 animals.remove(animal.getPosition());
             }
+            System.out.println("Remove");
         }
     }
 
@@ -109,7 +111,13 @@ abstract public class AbstractMap implements WorldMap {
     }
 
     public void moveAll() {
-        animals.values().forEach(animalList -> animalList.forEach(animal -> animal.moveNext(currentBounds)));
+        Map<Vector2d, List<Animal>> animalsCopy = new HashMap<>();
+        animals.forEach((key, value) -> animalsCopy.put(key, new ArrayList<>(value)));
+
+        animalsCopy.values().forEach(animalList -> animalList.forEach(animal -> move(animal)));
+
+//        animals.values().forEach(animalList -> animalList.forEach(animal -> animal.moveNext(currentBounds)));
+//        System.out.println("moving animals");
     }
 
     private void orderAnimals(List<Animal> animals) {
@@ -160,6 +168,7 @@ abstract public class AbstractMap implements WorldMap {
         feedAll();
         mateAll();
         plantsManager.growPlants();
+        System.out.println("test");
         daysCount++;
         mapChanged("Day " + daysCount);
     }
