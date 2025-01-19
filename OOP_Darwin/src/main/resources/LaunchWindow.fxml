@@ -31,6 +31,7 @@
             <Label fx:id="plantsCount" />
             <Label fx:id="emptySpacesCount" />
             <Label fx:id="averageAnimalEnergy" />
+            <Label fx:id="averageDeadAnimalAge" />
         </VBox>
     </HBox>
 

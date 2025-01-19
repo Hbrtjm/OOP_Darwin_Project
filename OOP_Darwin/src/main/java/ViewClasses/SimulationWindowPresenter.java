@@ -28,9 +28,17 @@ public class SimulationWindowPresenter implements MapChangeListener {
     Simulation simulation;
 
     private int animalsCountValue = 0;
+
     private int plantsCountValue =  0;
+
     private int emptySpaceCountValue = 0;
+
     private double averageAnimalEnergyValue = 0;
+
+    private double averageDeadAnimalAgeValue = 0;
+    private int sumOfDeadAnimalsAgeValue = 0;
+    private int deadAnimalsCountValue = 0;
+
     long timePauseValue = 300;
     @FXML
     private Label updateLabel;
@@ -46,6 +54,8 @@ public class SimulationWindowPresenter implements MapChangeListener {
     private Label emptySpacesCount;
     @FXML
     private Label averageAnimalEnergy;
+    @FXML
+    private Label averageDeadAnimalAge;
     @FXML
     private Slider pauseTime;
     public void initialize(SimulationParameters sParameters)
@@ -246,6 +256,31 @@ public class SimulationWindowPresenter implements MapChangeListener {
     }
 
     private double calculateAverageAnimalEnergy() {
+
+
+        int lowerX = worldMap.getCurrentBounds().lower().getX();
+        int lowerY = worldMap.getCurrentBounds().lower().getY();
+        int upperX = worldMap.getCurrentBounds().upper().getX();
+        int upperY = worldMap.getCurrentBounds().upper().getY();
+
+        for (int x = lowerX; x <= upperX; x++) {
+            for (int y = lowerY; y <= upperY; y++) {
+                ArrayList<Animal> animalsAtPosition = worldMap.getAnimalsAtPosition(new Vector2d(x, y));
+                if (animalsAtPosition != null) {
+                    for (Animal animal : animalsAtPosition) {
+                        if(animal.getEnergyLevel() == 0){
+                            deadAnimalsCountValue++;
+                            sumOfDeadAnimalsAgeValue += animal.getAge();
+                        }
+                    }
+                }
+            }
+        }
+
+        return (double) sumOfDeadAnimalsAgeValue / deadAnimalsCountValue;
+    }
+
+    private double calculateAverageAgeForDeadAnimals() {
         double totalEnergy = 0;
         int totalAnimals = 0;
 
@@ -306,11 +341,14 @@ public class SimulationWindowPresenter implements MapChangeListener {
         plantsCountValue = calculateTotalPlants();
         emptySpaceCountValue = calculateTotalEmptySpaces();
         averageAnimalEnergyValue = calculateAverageAnimalEnergy();
+        averageDeadAnimalAgeValue = calculateAverageAgeForDeadAnimals();
+
         Platform.runLater(() -> {
             animalsCount.setText("Animals Count: " + animalsCountValue);
             plantsCount.setText("Plants Count: " + plantsCountValue);
             emptySpacesCount.setText("Empty fields Count: " + emptySpaceCountValue);
             averageAnimalEnergy.setText("Average Animal Energy: " + averageAnimalEnergyValue);
+            averageDeadAnimalAge.setText("Average Dead Animal Age: " + averageDeadAnimalAgeValue);
         });
 
     }
