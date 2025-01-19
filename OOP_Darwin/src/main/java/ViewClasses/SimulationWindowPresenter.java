@@ -15,14 +15,12 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Paint;
-import javafx.scene.Node;
-import java.awt.*;
+
 import java.util.ArrayList;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.shape.Circle;
-import org.w3c.dom.css.Rect;
 
 public class SimulationWindowPresenter implements MapChangeListener {
     SimulationParameters parameters;
@@ -58,6 +56,18 @@ public class SimulationWindowPresenter implements MapChangeListener {
     {
 
         simulation.stop();
+    }
+
+    @FXML
+    public void handlePauseSimulation()
+    {
+        simulation.pause();
+    }
+
+    @FXML
+    public void handleResumeSimulation()
+    {
+        simulation.resume();
     }
 
     @FXML

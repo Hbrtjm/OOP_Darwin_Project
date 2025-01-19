@@ -7,6 +7,9 @@ public class Simulation implements Runnable {
     private final WorldMap map;
     private int pauseTime = 500;
     private boolean running = true;
+    private boolean paused = false;
+
+
     public void setPause(int pause)
     {
         pauseTime = pause;
@@ -21,6 +24,16 @@ public class Simulation implements Runnable {
     public void run()
     {
         while (running) {
+            synchronized (this) {
+                while(paused) {
+                    try{
+                        wait();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        return;
+                    }
+                }
+            }
             map.frame();
             System.out.println("Next frame");
             try {
@@ -29,6 +42,24 @@ public class Simulation implements Runnable {
             }
         }
     }
+
+    public void pause()
+    {
+        synchronized (this){
+            paused = true;
+        }
+
+    }
+
+    public void resume()
+    {
+        synchronized (this){
+            paused = false;
+            notify();
+        }
+
+    }
+
     public void stop()
     {
         running = false;
