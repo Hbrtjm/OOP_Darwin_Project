@@ -21,10 +21,19 @@
     </top>
 
     <center>
+    <HBox>
         <VBox spacing="10.0" alignment="CENTER" style="-fx-padding: 40;">
             <Label fx:id="updateLabel"/>
             <GridPane fx:id="mapGrid" gridLinesVisible="true"/>
         </VBox>
+        <VBox spacing="10.0" alignment="CENTER" style="-fx-padding: 10;">
+            <Label fx:id="animalsCount" />
+            <Label fx:id="plantsCount" />
+            <Label fx:id="emptySpacesCount" />
+            <Label fx:id="averageAnimalEnergy" />
+        </VBox>
+    </HBox>
+
     </center>
 
     <bottom>

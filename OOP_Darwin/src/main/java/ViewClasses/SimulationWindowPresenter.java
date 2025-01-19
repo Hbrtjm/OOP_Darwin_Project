@@ -26,6 +26,11 @@ public class SimulationWindowPresenter implements MapChangeListener {
     SimulationParameters parameters;
     WorldMap worldMap;
     Simulation simulation;
+
+    private int animalsCountValue = 0;
+    private int plantsCountValue =  0;
+    private int emptySpaceCountValue = 0;
+    private double averageAnimalEnergyValue = 0;
     long timePauseValue = 300;
     @FXML
     private Label updateLabel;
@@ -33,6 +38,14 @@ public class SimulationWindowPresenter implements MapChangeListener {
     private GridPane mapGrid;
     @FXML
     private Label speedValue;
+    @FXML
+    private Label animalsCount;
+    @FXML
+    private Label plantsCount;
+    @FXML
+    private Label emptySpacesCount;
+    @FXML
+    private Label averageAnimalEnergy;
     @FXML
     private Slider pauseTime;
     public void initialize(SimulationParameters sParameters)
@@ -77,6 +90,11 @@ public class SimulationWindowPresenter implements MapChangeListener {
         timePauseValue = Math.round(pauseTime.getValue());
         speedValue.setText("Czas pauzy w milisekundach: " + timePauseValue);
         simulation.setPause((int)(timePauseValue));
+    }
+
+    public void updateStatistics()
+    {
+
     }
 
     public void clearGrid()
@@ -166,6 +184,97 @@ public class SimulationWindowPresenter implements MapChangeListener {
         }
     }
 
+    private int calculateTotalAnimals() {
+        animalsCountValue = 0;
+        int lowerX = worldMap.getCurrentBounds().lower().getX();
+        int lowerY = worldMap.getCurrentBounds().lower().getY();
+        int upperX = worldMap.getCurrentBounds().upper().getX();
+        int upperY = worldMap.getCurrentBounds().upper().getY();
+
+        // Iteracja po całej mapie
+        for (int x = lowerX; x <= upperX; x++) {
+            for (int y = lowerY; y <= upperY; y++) {
+                ArrayList<Animal> animalsAtPosition = worldMap.getAnimalsAtPosition(new Vector2d(x, y));
+                if (animalsAtPosition != null) {
+                    animalsCountValue += animalsAtPosition.size();
+                }
+            }
+        }
+
+        return animalsCountValue;
+    }
+
+    private int calculateTotalPlants() {
+        plantsCountValue = 0;
+        int lowerX = worldMap.getCurrentBounds().lower().getX();
+        int lowerY = worldMap.getCurrentBounds().lower().getY();
+        int upperX = worldMap.getCurrentBounds().upper().getX();
+        int upperY = worldMap.getCurrentBounds().upper().getY();
+
+        for (int x = lowerX; x <= upperX; x++) {
+            for (int y = lowerY; y <= upperY; y++) {
+                Plant plantAtPosition = worldMap.plantAt(new Vector2d(x, y));
+                if (plantAtPosition != null) {
+                    plantsCountValue++;
+                }
+            }
+        }
+
+        return plantsCountValue;
+    }
+
+    private int calculateTotalEmptySpaces() {
+        emptySpaceCountValue = 0;
+
+        int lowerX = worldMap.getCurrentBounds().lower().getX();
+        int lowerY = worldMap.getCurrentBounds().lower().getY();
+        int upperX = worldMap.getCurrentBounds().upper().getX();
+        int upperY = worldMap.getCurrentBounds().upper().getY();
+
+        for (int x = lowerX; x <= upperX; x++) {
+            for (int y = lowerY; y <= upperY; y++) {
+                Plant plantAtPosition = worldMap.plantAt(new Vector2d(x, y));
+                ArrayList<Animal> animalsAtPosition = worldMap.getAnimalsAtPosition(new Vector2d(x, y));
+
+                if (plantAtPosition == null && (animalsAtPosition == null || animalsAtPosition.isEmpty())) {
+                    emptySpaceCountValue++;
+                }
+            }
+        }
+
+        return emptySpaceCountValue;
+    }
+
+    private double calculateAverageAnimalEnergy() {
+        double totalEnergy = 0;
+        int totalAnimals = 0;
+
+        int lowerX = worldMap.getCurrentBounds().lower().getX();
+        int lowerY = worldMap.getCurrentBounds().lower().getY();
+        int upperX = worldMap.getCurrentBounds().upper().getX();
+        int upperY = worldMap.getCurrentBounds().upper().getY();
+
+        for (int x = lowerX; x <= upperX; x++) {
+            for (int y = lowerY; y <= upperY; y++) {
+                ArrayList<Animal> animalsAtPosition = worldMap.getAnimalsAtPosition(new Vector2d(x, y));
+                if (animalsAtPosition != null) {
+                    totalAnimals += animalsAtPosition.size();
+                    for (Animal animal : animalsAtPosition) {
+                        totalEnergy += animal.getEnergyLevel();
+                    }
+                }
+            }
+        }
+
+        if (totalAnimals > 0) {
+            return totalEnergy / totalAnimals;
+        } else {
+            return 0;
+        }
+    }
+
+
+
     private void drawMap()
     {
         clearGrid();
@@ -193,6 +302,17 @@ public class SimulationWindowPresenter implements MapChangeListener {
                     addAnimal(new Vector2d(x,y),new Vector2d(x - lowerX,height - y + lowerY - 1), new Vector2d(CELL_WIDTH,CELL_HEIGHT));
             }
         }
+        animalsCountValue = calculateTotalAnimals();
+        plantsCountValue = calculateTotalPlants();
+        emptySpaceCountValue = calculateTotalEmptySpaces();
+        averageAnimalEnergyValue = calculateAverageAnimalEnergy();
+        Platform.runLater(() -> {
+            animalsCount.setText("Animals Count: " + animalsCountValue);
+            plantsCount.setText("Plants Count: " + plantsCountValue);
+            emptySpacesCount.setText("Empty fields Count: " + emptySpaceCountValue);
+            averageAnimalEnergy.setText("Average Animal Energy: " + averageAnimalEnergyValue);
+        });
+
     }
 
     @Override
