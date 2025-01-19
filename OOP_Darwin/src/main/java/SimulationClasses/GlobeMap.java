@@ -53,20 +53,19 @@ public class GlobeMap extends GrassMap {
 
     @Override
     public void move(Animal animal) {
+        removeAnimal(animal);
         animal.moveNextOnGlobeMap(currentBounds);
+        placeAnimal(animal);
     }
 
-//TODO - ruch animala na globeMap
+//TODO - przemieszczanie się za granicę
 
-//    @Override
-//    public void moveAll()
-//    {
-//        for(Vector2d key: animals.keySet())
-//        {
-//            for(Animal animal : animals.get(key))
-//            {
-//                animal.moveNextOnGlobeMap(currentBounds);
-//            }
-//        }
-//    }
+    @Override
+    public void moveAll()
+    {
+        Map<Vector2d, List<Animal>> animalsCopy = new HashMap<>();
+        animals.forEach((key, value) -> animalsCopy.put(key, new ArrayList<>(value)));
+
+        animalsCopy.values().forEach(animalList -> animalList.forEach(animal -> move(animal)));
+    }
 }

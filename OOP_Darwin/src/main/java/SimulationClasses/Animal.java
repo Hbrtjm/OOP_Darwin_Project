@@ -154,27 +154,32 @@ public class Animal implements WorldElement {
     {
         currentDirection = MapDirection.changeDirection(currentDirection,behaviour.nextGene(genes));
 
-        //newPosition is for testing if animal does not go over boundaries
+        //newPosition is for checking if animal does not go over boundaries
         Vector2d newPosition = new Vector2d(currentPosition.getX(),currentPosition.getY());
-        newPosition.add(MoveTranslator.TranslateOne(currentDirection).toUnitVector());
+        newPosition = newPosition.add(MoveTranslator.TranslateOne(currentDirection).toUnitVector());
 
         //going over upper/lower boundary
         if (newPosition.getY() > boundary.upper().getY() || newPosition.getY() < boundary.lower().getY() )
         {
+
             currentDirection = MapDirection.changeDirection(currentDirection,4);
         }
         else
         {
             //going over left boundary
             if (newPosition.getX() < boundary.lower().getX()) {
-                currentPosition.add(MoveTranslator.TranslateOne(currentDirection).toUnitVector()); //ruch odbywa się jak bez granic
-                currentPosition.add(new Vector2d(boundary.upper().getX() - boundary.lower().getX() + 1, 0)); // następuje przeniesienie na drugą stronę mapy
+                currentPosition = currentPosition.add(MoveTranslator.TranslateOne(currentDirection).toUnitVector()); //ruch odbywa się jak bez granic
+                currentPosition = currentPosition.add(new Vector2d(boundary.upper().getX() - boundary.lower().getX() + 1, 0)); // następuje przeniesienie na drugą stronę mapy
             }
 
             //going over right boundary
-            if (newPosition.getX() > boundary.upper().getX()) {
-                currentPosition.add(MoveTranslator.TranslateOne(currentDirection).toUnitVector());
-                currentPosition.add(new Vector2d(boundary.lower().getX() - boundary.upper().getX() - 1, 0));
+            else if (newPosition.getX() > boundary.upper().getX()) {
+                currentPosition = currentPosition.add(MoveTranslator.TranslateOne(currentDirection).toUnitVector());
+                currentPosition = currentPosition.add(new Vector2d(boundary.lower().getX() - boundary.upper().getX() - 1, 0));
+            }
+            // normal movement
+            else {
+                currentPosition = currentPosition.add(MoveTranslator.TranslateOne(currentDirection).toUnitVector());
             }
         }
     }
