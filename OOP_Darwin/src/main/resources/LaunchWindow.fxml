@@ -29,6 +29,8 @@
 
     <bottom>
         <VBox spacing="10.0" alignment="CENTER" style="-fx-padding: 20;">
+            <Button text="Pause" onAction="#handlePauseSimulation"/>
+            <Button text="Resume" onAction="#handleResumeSimulation" />
             <Label fx:id="speedValue" text="Czas pauzy w milisekundach: 300" />
             <Slider fx:id="pauseTime" min="50" max="1000" value="300" showTickLabels="true" showTickMarks="true" majorTickUnit="10" minorTickCount="5" blockIncrement="1" onMouseDragged="#handleSliderChange"/>
         </VBox>
