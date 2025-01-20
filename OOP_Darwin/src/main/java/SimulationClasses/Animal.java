@@ -122,7 +122,7 @@ public class Animal implements WorldElement {
     {
         if(getChildren().equals(0))
         {
-            return 0;
+            return 1;
         }
         int descendantSum = 0;
         for(Animal child : children)
