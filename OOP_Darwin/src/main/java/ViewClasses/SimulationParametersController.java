@@ -69,6 +69,8 @@ public class SimulationParametersController {
     private Map<String,File> filenameToFile;
     private final String PARAMETERS_DIR = "parameters";
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private SimulationWindowPresenter simulationWindowPresenter;
+    private boolean saveStatistics = false;
 
 
 
@@ -288,6 +290,11 @@ public class SimulationParametersController {
         }
     }
 
+    @FXML
+    private void handleSavingToCsv () {
+        saveStatistics =! saveStatistics;
+    }
+
     private SimulationParameters getSimulationParameters() {
         int mapWidth = Integer.parseInt(mapWidthField.getText());
         int mapHeight = Integer.parseInt(mapHeightField.getText());
@@ -309,7 +316,7 @@ public class SimulationParametersController {
                 mapWidth, mapHeight, mapVariant, initialPlantCount, plantEnergy,
                 dailyPlantGrowth, initialAnimalCount, initialAnimalEnergy, movementEnergyCost,
                 energyUsedForReproduction, minMutations, maxMutations,
-                mutationVariant, genomeLength, behaviourType
+                mutationVariant, genomeLength, behaviourType, saveStatistics
         );
         return parameters;
     }

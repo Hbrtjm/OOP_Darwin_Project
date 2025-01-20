@@ -19,5 +19,5 @@ public record SimulationParameters (
         int maxMutations,
         MutationType mutationVariant,
         int genomeLength,
-        BehaviourType behaviourType
-) {}
+        BehaviourType behaviourType,
+        boolean saveStatistics) {}

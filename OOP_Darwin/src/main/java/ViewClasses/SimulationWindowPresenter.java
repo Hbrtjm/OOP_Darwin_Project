@@ -12,6 +12,9 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Paint;
 import javafx.scene.input.MouseEvent;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -475,6 +478,45 @@ private String findMostFrequentGenome() {
         selectedAnimalChildrenCountField.setText("Children Count: " + selectedAnimalChildrenCount);
         selectedAnimalGenesField.setText("Genes: " + selectedAnimalGenes);
         selectedAnimalDateOfDeath.setText(dateOfDeath);
+
+        synchronized (this) {
+            if (parameters.saveStatistics()) {
+                saveStatisticsToCSV();
+            }
+
+        }
+
+    }
+
+
+    public void saveStatisticsToCSV() {
+        String csvFile = "statistics.csv";
+        boolean append = new File(csvFile).exists();
+
+        try (FileWriter writer = new FileWriter(csvFile, true)) {
+
+            if (!append) {
+                writer.append("Animals Count").append(";")
+                        .append("Plants Count").append(";")
+                        .append("Empty Spaces").append(";")
+                        .append("Average Animal Energy").append(";")
+                        .append("Average Dead Animal Age").append(";")
+                        .append("Average Animal Children Count").append(";")
+                        .append("Most Frequent Genome").append("\n");
+
+            }
+
+            writer.append(String.valueOf(animalsCountValue)).append(";")
+                    .append(String.valueOf(plantsCountValue)).append(";")
+                    .append(String.valueOf(emptySpaceCountValue)).append(";")
+                    .append(String.format("%.2f", averageAnimalEnergyValue)).append(";")
+                    .append(String.format("%.2f", averageDeadAnimalAgeValue)).append(";")
+                    .append(String.format("%.2f", averageAnimalsChildrenCountValue)).append(";")
+                    .append(mostFrequentGenome).append("\n");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

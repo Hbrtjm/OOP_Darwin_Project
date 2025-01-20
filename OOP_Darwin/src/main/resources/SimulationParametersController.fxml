@@ -86,6 +86,7 @@
             <Button text="Load" onAction="#handleLoadParameters" />
             <ComboBox fx:id="usedFile" onAction="#handlePickParametersFile" />
             <Button text="Delete saved files" onAction="#deleteSavedFiles"/>
+            <CheckBox text="Save statistics" onAction="#handleSavingToCsv" />
         </HBox>
     </bottom>
 </BorderPane>
