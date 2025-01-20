@@ -14,7 +14,6 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Paint;
 
 import java.util.ArrayList;
-import java.util.Stack;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -103,7 +102,7 @@ public class SimulationWindowPresenter implements MapChangeListener {
     {
         drawMap();
         timePauseValue = Math.round(pauseTime.getValue());
-        speedValue.setText("Czas pauzy w milisekundach: " + timePauseValue);
+        speedValue.setText("Pause in milliseconds: " + timePauseValue);
         simulation.setPause((int)(timePauseValue));
     }
 
@@ -147,13 +146,13 @@ public class SimulationWindowPresenter implements MapChangeListener {
 
     public static Paint getAnimalColor(int currentEnergy, int maxEnergy) {
         if (currentEnergy == maxEnergy) {
-            return Paint.valueOf("BLUE"); // FULL energy
+            return Paint.valueOf("BLUE");
         } else if (currentEnergy > maxEnergy * 2 / 3) {
-            return Paint.valueOf("YELLOW"); // Between 2/3 and max
+            return Paint.valueOf("YELLOW");
         } else if (currentEnergy > maxEnergy / 3) {
-            return Paint.valueOf("BLACK"); // Between 1/3 and 2/3
+            return Paint.valueOf("BLACK");
         } else {
-            return Paint.valueOf("RED"); // Below 1/3
+            return Paint.valueOf("RED");
         }
     }
 
@@ -191,8 +190,8 @@ public class SimulationWindowPresenter implements MapChangeListener {
             }
             else
             {
-                centerX = -circleRadius;
-                centerY = -circleRadius;
+                centerX = -circleRadius*(layout.getX()-1)-cellWidth*0.06;
+                centerY = -circleRadius*(layout.getX()-1);
             }
             for (int i = 0; i < n; i++) {
                 int row = i / rows;
@@ -249,8 +248,6 @@ public class SimulationWindowPresenter implements MapChangeListener {
 
     private int calculateTotalEmptySpaces()
     {
-
-
         int lowerX = worldMap.getCurrentBounds().lower().getX();
         int lowerY = worldMap.getCurrentBounds().lower().getY();
         int upperX = worldMap.getCurrentBounds().upper().getX();
@@ -325,7 +322,7 @@ public class SimulationWindowPresenter implements MapChangeListener {
         }
     }
 
-    private double caluclateAverageChildrenCount() {
+    private double calculateAverageChildrenCount() {
         animalsCountValue = 0;
         averageAnimalsChildrenCountValue = 0;
         int lowerX = worldMap.getCurrentBounds().lower().getX();
@@ -414,7 +411,7 @@ private String findMostFrequentGenome() {
         emptySpaceCountValue = calculateTotalEmptySpaces();
         averageAnimalEnergyValue = calculateAverageAnimalEnergy();
         averageDeadAnimalAgeValue = calculateAverageAgeForDeadAnimals();
-        averageAnimalsChildrenCountValue = caluclateAverageChildrenCount();
+        averageAnimalsChildrenCountValue = calculateAverageChildrenCount();
         mostFrequentGenome = findMostFrequentGenome();
 
         Platform.runLater(() -> {
