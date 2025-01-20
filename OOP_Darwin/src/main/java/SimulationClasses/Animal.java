@@ -237,6 +237,8 @@ public class Animal implements WorldElement {
         child.setEnergyLevel(2*matingEnergy);
         subtractEnergy(matingEnergy);
         other.subtractEnergy(matingEnergy);
+        children.add(child);
+        other.children.add(child);
         return child;
     }
 
