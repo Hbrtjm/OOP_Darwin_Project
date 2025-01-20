@@ -457,28 +457,31 @@ private String findMostFrequentGenome() {
         // Animal statistics
         if(selectedAnimal != null)
         {
-            selectedAnimalEnergy = selectedAnimal.getEnergyLevel();
-            selectedAnimalMaxEnergy = selectedAnimal.getMaxEnergyLevel();
-            selectedAnimalAge = selectedAnimal.getAge();
-            selectedAnimalChildrenCount = selectedAnimal.getChildrenCount();
+            selectedAnimalEnergy = "" + selectedAnimal.getEnergyLevel();
+            selectedAnimalMaxEnergy = "" + selectedAnimal.getMaxEnergyLevel();
+            selectedAnimalAge = "" + selectedAnimal.getAge();
+            selectedAnimalChildrenCount = "" + selectedAnimal.getChildrenCount();
             selectedAnimalGenes = selectedAnimal.getGenes().toString();
             dateOfDeath = selectedAnimal.getDayOfDeath() == 0 ? "Still alive" : "Day of death:" + selectedAnimal.getDayOfDeath();
+            descendantsCount = "Descendants count: " + selectedAnimal.getDescendantsCount();
         }
         else
         {
-            selectedAnimalEnergy = '-';
-            selectedAnimalMaxEnergy = '-';
-            selectedAnimalAge = '-';
-            selectedAnimalChildrenCount = '-';
+            selectedAnimalEnergy = "-";
+            selectedAnimalMaxEnergy = "-";
+            selectedAnimalAge = "-";
+            selectedAnimalChildrenCount = "-";
             selectedAnimalGenes = "-";
             dateOfDeath = "-";
+            descendantsCount = "-";
         }
         selectedAnimalEnergyField.setText("Selected Animal Energy: " + selectedAnimalEnergy + " / " + selectedAnimalMaxEnergy);
         selectedAnimalAgeField.setText("Selected Animal Age: " + selectedAnimalAge);
         selectedAnimalChildrenCountField.setText("Children Count: " + selectedAnimalChildrenCount);
         selectedAnimalGenesField.setText("Genes: " + selectedAnimalGenes);
         selectedAnimalDateOfDeath.setText(dateOfDeath);
-
+        selectedAnimalDescendants.setText(descendantsCount);
+        
         synchronized (this) {
             if (parameters.saveStatistics()) {
                 saveStatisticsToCSV();
