@@ -15,6 +15,8 @@ import javafx.scene.paint.Paint;
 
 import java.util.ArrayList;
 import java.util.Stack;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -26,7 +28,7 @@ public class SimulationWindowPresenter implements MapChangeListener {
     Simulation simulation;
 
     private int animalsCountValue = 0;
-
+    private double averageAnimalsChildrenCountValue = 0;
     private int plantsCountValue =  0;
 
     private int emptySpaceCountValue = 0;
@@ -36,6 +38,7 @@ public class SimulationWindowPresenter implements MapChangeListener {
     private double averageDeadAnimalAgeValue = 0;
     private int sumOfDeadAnimalsAgeValue = 0;
     private int deadAnimalsCountValue = 0;
+    private String mostFrequentGenome;
 
     long timePauseValue = 300;
     @FXML
@@ -54,6 +57,10 @@ public class SimulationWindowPresenter implements MapChangeListener {
     private Label averageAnimalEnergy;
     @FXML
     private Label averageDeadAnimalAge;
+    @FXML
+    private Label averageAnimalsChildrenCount;
+    @FXML
+    private Label mostCommonGenome;
     @FXML
     private Slider pauseTime;
     public void initialize(SimulationParameters sParameters)
@@ -220,7 +227,6 @@ public class SimulationWindowPresenter implements MapChangeListener {
         int upperX = worldMap.getCurrentBounds().upper().getX();
         int upperY = worldMap.getCurrentBounds().upper().getY();
 
-        // Iteracja po całej mapie
         for (int x = lowerX; x <= upperX; x++) {
             for (int y = lowerY; y <= upperY; y++) {
                 ArrayList<Animal> animalsAtPosition = worldMap.getAnimalsAtPosition(new Vector2d(x, y));
@@ -252,21 +258,25 @@ public class SimulationWindowPresenter implements MapChangeListener {
         return plantsCountValue;
     }
 
-    private int calculateTotalEmptySpaces() {
-        emptySpaceCountValue = 0;
+    private int calculateTotalEmptySpaces()
+    {
+
 
         int lowerX = worldMap.getCurrentBounds().lower().getX();
         int lowerY = worldMap.getCurrentBounds().lower().getY();
         int upperX = worldMap.getCurrentBounds().upper().getX();
         int upperY = worldMap.getCurrentBounds().upper().getY();
+        int width = upperX - lowerX;
+        int height = upperY - lowerY;
+
+        emptySpaceCountValue = width * height;
 
         for (int x = lowerX; x <= upperX; x++) {
             for (int y = lowerY; y <= upperY; y++) {
                 Plant plantAtPosition = worldMap.plantAt(new Vector2d(x, y));
                 ArrayList<Animal> animalsAtPosition = worldMap.getAnimalsAtPosition(new Vector2d(x, y));
-
-                if (plantAtPosition == null && (animalsAtPosition == null || animalsAtPosition.isEmpty())) {
-                    emptySpaceCountValue++;
+                if (plantAtPosition != null || animalsAtPosition != null ) {
+                    emptySpaceCountValue--;
                 }
             }
         }
@@ -274,8 +284,8 @@ public class SimulationWindowPresenter implements MapChangeListener {
         return emptySpaceCountValue;
     }
 
-    private double calculateAverageAnimalEnergy() {
-
+    private double calculateAverageAgeForDeadAnimals()
+    {
 
         int lowerX = worldMap.getCurrentBounds().lower().getX();
         int lowerY = worldMap.getCurrentBounds().lower().getY();
@@ -295,11 +305,10 @@ public class SimulationWindowPresenter implements MapChangeListener {
                 }
             }
         }
-
         return (double) sumOfDeadAnimalsAgeValue / deadAnimalsCountValue;
     }
 
-    private double calculateAverageAgeForDeadAnimals() {
+    private double calculateAverageAnimalEnergy() {
         double totalEnergy = 0;
         int totalAnimals = 0;
 
@@ -326,6 +335,58 @@ public class SimulationWindowPresenter implements MapChangeListener {
             return 0;
         }
     }
+
+    private double caluclateAverageChildrenCount() {
+        animalsCountValue = 0;
+        averageAnimalsChildrenCountValue = 0;
+        int lowerX = worldMap.getCurrentBounds().lower().getX();
+        int lowerY = worldMap.getCurrentBounds().lower().getY();
+        int upperX = worldMap.getCurrentBounds().upper().getX();
+        int upperY = worldMap.getCurrentBounds().upper().getY();
+
+        for (int x = lowerX; x <= upperX; x++) {
+            for (int y = lowerY; y <= upperY; y++) {
+                ArrayList<Animal> animalsAtPosition = worldMap.getAnimalsAtPosition(new Vector2d(x, y));
+                if (animalsAtPosition != null) {
+                    for (Animal animal : animalsAtPosition) {
+                        animalsCountValue++;
+                        averageAnimalsChildrenCountValue += animal.getChildrenCount();
+                    }
+                }
+            }
+        }
+        return averageAnimalsChildrenCountValue / animalsCountValue;
+    }
+
+
+private String findMostFrequentGenome() {
+    Map<List<Integer>, Integer> genomeFrequency = new HashMap<>();
+
+    int lowerX = worldMap.getCurrentBounds().lower().getX();
+    int lowerY = worldMap.getCurrentBounds().lower().getY();
+    int upperX = worldMap.getCurrentBounds().upper().getX();
+    int upperY = worldMap.getCurrentBounds().upper().getY();
+
+    for (int x = lowerX; x <= upperX; x++) {
+        for (int y = lowerY; y <= upperY; y++) {
+            ArrayList<Animal> animalsAtPosition = worldMap.getAnimalsAtPosition(new Vector2d(x, y));
+            if (animalsAtPosition != null) {
+                for (Animal animal : animalsAtPosition) {
+                    List<Integer> genome = animal.getGenes().getGenesList();
+                    genomeFrequency.put(genome, genomeFrequency.getOrDefault(genome, 0) + 1);
+                }
+                }
+            }
+        }
+
+
+    List<Map.Entry<List<Integer>, Integer>> sortedGenomes = genomeFrequency.entrySet().stream()
+            .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
+            .collect(Collectors.toList());
+
+    return sortedGenomes.isEmpty() ? Collections.emptyList().toString() : sortedGenomes.get(0).getKey().toString();
+    }
+
 
 
 
@@ -356,18 +417,25 @@ public class SimulationWindowPresenter implements MapChangeListener {
                     addAnimals(new Vector2d(x,y),new Vector2d(x - lowerX,height - y + lowerY - 1), new Vector2d(CELL_WIDTH,CELL_HEIGHT));
             }
         }
+
+        //updating statistics
+
         animalsCountValue = calculateTotalAnimals();
         plantsCountValue = calculateTotalPlants();
         emptySpaceCountValue = calculateTotalEmptySpaces();
         averageAnimalEnergyValue = calculateAverageAnimalEnergy();
         averageDeadAnimalAgeValue = calculateAverageAgeForDeadAnimals();
+        averageAnimalsChildrenCountValue = caluclateAverageChildrenCount();
+        mostFrequentGenome = findMostFrequentGenome();
 
         Platform.runLater(() -> {
             animalsCount.setText("Animals Count: " + animalsCountValue);
             plantsCount.setText("Plants Count: " + plantsCountValue);
             emptySpacesCount.setText("Empty fields Count: " + emptySpaceCountValue);
-            averageAnimalEnergy.setText("Average Animal Energy: " + averageAnimalEnergyValue);
-            averageDeadAnimalAge.setText("Average Dead Animal Age: " + averageDeadAnimalAgeValue);
+            averageAnimalEnergy.setText("Average Animal Energy: " + String.format("%.2f",averageAnimalEnergyValue));
+            averageDeadAnimalAge.setText("Average Dead Animal Age: " + String.format("%.2f",averageDeadAnimalAgeValue));
+            averageAnimalsChildrenCount.setText("Average Children Count of Animal: "+  String.format("%.2f",averageAnimalsChildrenCountValue));
+            mostCommonGenome.setText("Most frequent genome: " + mostFrequentGenome);
         });
 
     }

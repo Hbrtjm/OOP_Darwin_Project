@@ -32,7 +32,7 @@ public class Animal implements WorldElement {
     private int currentMove;
     private Genes genes;
     private Collection<Animal> kids;
-    private Genes getGenes()
+    public Genes getGenes()
     {
         return genes;
     }
@@ -237,6 +237,8 @@ public class Animal implements WorldElement {
         child.setEnergyLevel(2*matingEnergy);
         subtractEnergy(matingEnergy);
         other.subtractEnergy(matingEnergy);
+        children.add(child);
+        other.children.add(child);
         return child;
     }
 

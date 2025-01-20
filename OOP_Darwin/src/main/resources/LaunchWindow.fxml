@@ -32,6 +32,8 @@
             <Label fx:id="emptySpacesCount" />
             <Label fx:id="averageAnimalEnergy" />
             <Label fx:id="averageDeadAnimalAge" />
+            <Label fx:id="averageAnimalsChildrenCount" />
+            <Label fx:id="mostCommonGenome" />
         </VBox>
     </HBox>
 
