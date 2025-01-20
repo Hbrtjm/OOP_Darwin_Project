@@ -4,7 +4,7 @@ import BaseClasses.Vector2d;
 import Enums.MapDirection;
 
 public class MoveTranslator {
-    public static MapDirection TranslateOne(int arg) {
+    public static MapDirection TranslateOne(Integer arg) {
         return switch (arg) {
             case 0 -> MapDirection.NORTH;
             case 1 -> MapDirection.NORTH_EAST;

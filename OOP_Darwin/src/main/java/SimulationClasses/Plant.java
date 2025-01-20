@@ -1,16 +1,16 @@
 package SimulationClasses;
 
-abstract public class Food {
-    private double energy;
-    public double getEnergy()
+abstract public class Plant {
+    private int energy;
+    public int getEnergy()
     {
         return energy;
     }
-    public Food()
+    public Plant()
     {
         energy = 10;
     }
-    public Food(double initialEnergy)
+    public Plant(int initialEnergy)
     {
         this();
         energy = initialEnergy;

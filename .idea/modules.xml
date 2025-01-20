@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/OOP_Darwin_Project.iml" filepath="$PROJECT_DIR$/.idea/OOP_Darwin_Project.iml" />
+      <module fileurl="file://$PROJECT_DIR$/OOP_Darwin.iml" filepath="$PROJECT_DIR$/OOP_Darwin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/OOP_Darwin.main.iml" filepath="$PROJECT_DIR$/.idea/modules/OOP_Darwin.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/OOP_Darwin.test.iml" filepath="$PROJECT_DIR$/.idea/modules/OOP_Darwin.test.iml" />
     </modules>
   </component>
 </project>
