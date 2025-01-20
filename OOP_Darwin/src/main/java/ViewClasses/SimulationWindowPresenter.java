@@ -144,28 +144,17 @@ public class SimulationWindowPresenter implements MapChangeListener {
         }
     }
 
-    private void addAnimal(Vector2d place, Vector2d mapCoords,Vector2d cellSize) {
-        StackPane cell = new StackPane();
-        cell.setMaxWidth(cellSize.getX());
-        cell.setMaxHeight(cellSize.getY());
-        cell.setPrefSize(cellSize.getX(), cellSize.getY());
-        Circle circle = new Circle();
-//        circle.setRadius(Math.min(cell.getWidth(), cell.getHeight()) / 4);
-//        circle.setCenterX(cell.getWidth() / 2);
-//        circle.setCenterY(cell.getHeight() / 2);
-        // Adjust the circle size dynamically based on the cell's size
-        cell.widthProperty().addListener((observable, oldValue, newValue) -> {
-            circle.setRadius(Math.min(newValue.doubleValue(), cell.getHeight()) / 4);
-        });
 
-        cell.heightProperty().addListener((observable, oldValue, newValue) -> {
-            circle.setRadius(Math.min(cell.getWidth(), newValue.doubleValue()) / 4);
-        });
-
-        // Add the Circle to the StackPan
-        circle.setFill(Paint.valueOf("RED"));
-        cell.getChildren().add(circle);
-        mapGrid.add(cell, mapCoords.getX(), mapCoords.getY());
+    public static Paint getAnimalColor(int currentEnergy, int maxEnergy) {
+        if (currentEnergy == maxEnergy) {
+            return Paint.valueOf("BLUE"); // FULL energy
+        } else if (currentEnergy > maxEnergy * 2 / 3) {
+            return Paint.valueOf("YELLOW"); // Between 2/3 and max
+        } else if (currentEnergy > maxEnergy / 3) {
+            return Paint.valueOf("BLACK"); // Between 1/3 and 2/3
+        } else {
+            return Paint.valueOf("RED"); // Below 1/3
+        }
     }
 
     private Vector2d nearestBiggestSquare(int n)
@@ -211,7 +200,7 @@ public class SimulationWindowPresenter implements MapChangeListener {
                 double xOffset = centerX + (col) * (cellWidth / cols);
                 double yOffset = centerY + (row) * (cellHeight / rows);
                 Circle circle = new Circle(circleRadius);
-                circle.setFill(Paint.valueOf("RED"));
+                circle.setFill(getAnimalColor(animals.get(i).getEnergyLevel(),animals.get(i).getMaxEnergyLevel()));
                 circle.setTranslateX(xOffset);
                 circle.setTranslateY(yOffset);
                 cell.getChildren().add(circle);

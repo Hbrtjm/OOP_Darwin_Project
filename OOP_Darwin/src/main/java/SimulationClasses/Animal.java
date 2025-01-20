@@ -206,13 +206,11 @@ public class Animal implements WorldElement {
         subtractEnergy(movementEnergyCost);
         age++;
     }
-    
-//    public void moveNextBoundless()
-//    {
-//        // One-liner to be changed, but looks funny for now...
-//        currentDirection = MapDirection.changeDirection(currentDirection,behaviour.nextGene(genes));
-//        currentPosition.add(MoveTranslator.TranslateOne(currentDirection).toUnitVector());
-//    }
+
+    public int getMaxEnergyLevel()
+    {
+        return maxEnergyLevel;
+    }
 
     private boolean inBounds(Vector2d position, Boundary bounds)
     {
