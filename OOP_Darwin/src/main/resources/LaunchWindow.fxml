@@ -34,6 +34,12 @@
             <Label fx:id="averageDeadAnimalAge" />
             <Label fx:id="averageAnimalsChildrenCount" />
             <Label fx:id="mostCommonGenome" />
+            <Label text="Selected Animal Information:" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+            <Label fx:id="selectedAnimalEnergyField" text="Selected Animal Energy: N/A" />
+            <Label fx:id="selectedAnimalAgeField" text="Selected Animal Age: N/A" />
+            <Label fx:id="selectedAnimalChildrenCountField" text="Children Count: N/A" />
+            <Label fx:id="selectedAnimalGenesField" text="Genes: N/A" />
+            <Label fx:id="selectedAnimalDateOfDeath" />
         </VBox>
     </HBox>
 

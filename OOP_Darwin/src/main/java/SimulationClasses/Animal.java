@@ -16,8 +16,7 @@ import Interfaces.WorldMap;
 
 // F2
 public class Animal implements WorldElement {
-    private SimulationParameters parameters;
-    private WorldMap map;
+    private int dayOfDeath;
     private int age = 0;
     private List<Animal> children = new ArrayList<>();
     public int color;
@@ -32,6 +31,16 @@ public class Animal implements WorldElement {
     private int currentMove;
     private Genes genes;
     private Collection<Animal> kids;
+
+    public void setDayOfDeath(int dayOfDeath)
+    {
+        this.dayOfDeath = dayOfDeath;
+    }
+    public int getDayOfDeath()
+    {
+        return dayOfDeath;
+    }
+
     public Genes getGenes()
     {
         return genes;
@@ -109,6 +118,19 @@ public class Animal implements WorldElement {
     public int getAge() { return age; }
     public List<Animal> getChildren() { return children; }
     public int getChildrenCount() { return children.size(); }
+    public int getDescendantsCount()
+    {
+        if(getChildren().equals(0))
+        {
+            return 0;
+        }
+        int descendantSum = 0;
+        for(Animal child : children)
+        {
+            descendantSum += child.getDescendantsCount();
+        }
+        return descendantSum;
+    }
     public void setMaxEnergyLevel(int newMaxEnergyLevel) { maxEnergyLevel = newMaxEnergyLevel; }
 
     public void setEnergyLevel(int newEnergyLevel)
@@ -206,13 +228,11 @@ public class Animal implements WorldElement {
         subtractEnergy(movementEnergyCost);
         age++;
     }
-    
-//    public void moveNextBoundless()
-//    {
-//        // One-liner to be changed, but looks funny for now...
-//        currentDirection = MapDirection.changeDirection(currentDirection,behaviour.nextGene(genes));
-//        currentPosition.add(MoveTranslator.TranslateOne(currentDirection).toUnitVector());
-//    }
+
+    public int getMaxEnergyLevel()
+    {
+        return maxEnergyLevel;
+    }
 
     private boolean inBounds(Vector2d position, Boundary bounds)
     {

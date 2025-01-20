@@ -12,6 +12,12 @@ public class Genes implements Serializable, Iterable<Integer>, Iterator<Integer>
     private List<Integer> genesList;
     private final Mutation mutation;
 
+    @Override
+    public String toString()
+    {
+        return genesList.toString();
+    }
+
     public Genes(Mutation mutationType) {
         genesList = new ArrayList<>();
         this.mutation = mutationType;
