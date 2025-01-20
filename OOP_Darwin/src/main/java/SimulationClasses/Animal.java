@@ -32,7 +32,7 @@ public class Animal implements WorldElement {
     private int currentMove;
     private Genes genes;
     private Collection<Animal> kids;
-    private Genes getGenes()
+    public Genes getGenes()
     {
         return genes;
     }
