@@ -108,9 +108,16 @@ abstract public class AbstractMap implements WorldMap {
     }
 
     public void deleteCorpses() {
-        System.out.println("Deleting corpses..." + animals.values().size());
-        animals.values().forEach(animalsList -> animalsList.removeIf(animal -> animal.getEnergyLevel() == 0));
-        System.out.println(animals.values().size());
+        animals.values().forEach(animalsList ->
+                animalsList.removeIf(animal -> {
+                    if (animal.getEnergyLevel() == 0) {
+                        animal.setDayOfDeath(daysCount); // Set the day of death
+                        return true; // Remove the animal
+                    }
+                    return false; // Keep the animal
+                })
+        );
+
         animals.entrySet().removeIf(entry -> entry.getValue().isEmpty());
     }
 

@@ -3,15 +3,14 @@ package ViewClasses;
 import BaseClasses.Vector2d;
 import Interfaces.MapChangeListener;
 import Interfaces.WorldMap;
-import SimulationClasses.Animal;
-import SimulationClasses.Plant;
-import SimulationClasses.Simulation;
-import SimulationClasses.SimulationParameters;
+import SimulationClasses.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.SubScene;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Paint;
+import javafx.scene.input.MouseEvent;
 
 import java.util.ArrayList;
 import java.util.*;
@@ -22,14 +21,14 @@ import javafx.scene.control.Label;
 import javafx.scene.shape.Circle;
 
 public class SimulationWindowPresenter implements MapChangeListener {
-    SimulationParameters parameters;
-    WorldMap worldMap;
-    Simulation simulation;
-
+    private SimulationParameters parameters;
+    private WorldMap worldMap;
+    private Simulation simulation;
+    private Animal selectedAnimal;
     private int animalsCountValue = 0;
     private double averageAnimalsChildrenCountValue = 0;
     private int plantsCountValue =  0;
-
+    private final Paint selectedAnimalPaint = Paint.valueOf("VIOLET");
     private int emptySpaceCountValue = 0;
 
     private double averageAnimalEnergyValue = 0;
@@ -40,6 +39,17 @@ public class SimulationWindowPresenter implements MapChangeListener {
     private String mostFrequentGenome;
 
     long timePauseValue = 300;
+
+    @FXML
+    private Label selectedAnimalEnergyField;
+    @FXML
+    private Label selectedAnimalAgeField;
+    @FXML
+    private Label selectedAnimalChildrenCountField;
+    @FXML
+    private Label selectedAnimalGenesField;
+    @FXML
+    private Label selectedAnimalDateOfDeath;
     @FXML
     private Label updateLabel;
     @FXML
@@ -199,9 +209,20 @@ public class SimulationWindowPresenter implements MapChangeListener {
                 double xOffset = centerX + (col) * (cellWidth / cols);
                 double yOffset = centerY + (row) * (cellHeight / rows);
                 Circle circle = new Circle(circleRadius);
-                circle.setFill(getAnimalColor(animals.get(i).getEnergyLevel(),animals.get(i).getMaxEnergyLevel()));
+                if(animals.get(i).equals(selectedAnimal))
+                {
+                    circle.setFill(selectedAnimalPaint);
+                }
+                else
+                {
+                    circle.setFill(getAnimalColor(animals.get(i).getEnergyLevel(), animals.get(i).getMaxEnergyLevel()));
+                }
                 circle.setTranslateX(xOffset);
                 circle.setTranslateY(yOffset);
+                int finalI = i;
+                circle.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+                    selectedAnimal = animals.get(finalI);
+                });
                 cell.getChildren().add(circle);
             }
             mapGrid.add(cell, mapCoords.getX(), mapCoords.getY());
@@ -423,7 +444,37 @@ private String findMostFrequentGenome() {
             averageAnimalsChildrenCount.setText("Average Children Count of Animal: "+  String.format("%.2f",averageAnimalsChildrenCountValue));
             mostCommonGenome.setText("Most frequent genome: " + mostFrequentGenome);
         });
-
+        int selectedAnimalEnergy;
+        int selectedAnimalMaxEnergy;
+        int selectedAnimalAge;
+        int selectedAnimalChildrenCount;
+        String selectedAnimalGenes;
+        String selectedAnimalChildren;
+        String dateOfDeath;
+        // Animal statistics
+        if(selectedAnimal != null)
+        {
+            selectedAnimalEnergy = selectedAnimal.getEnergyLevel();
+            selectedAnimalMaxEnergy = selectedAnimal.getMaxEnergyLevel();
+            selectedAnimalAge = selectedAnimal.getAge();
+            selectedAnimalChildrenCount = selectedAnimal.getChildrenCount();
+            selectedAnimalGenes = selectedAnimal.getGenes().toString();
+            dateOfDeath = selectedAnimal.getDayOfDeath() == 0 ? "Still alive" : "Day of death:" + selectedAnimal.getDayOfDeath();
+        }
+        else
+        {
+            selectedAnimalEnergy = '-';
+            selectedAnimalMaxEnergy = '-';
+            selectedAnimalAge = '-';
+            selectedAnimalChildrenCount = '-';
+            selectedAnimalGenes = "-";
+            dateOfDeath = "-";
+        }
+        selectedAnimalEnergyField.setText("Selected Animal Energy: " + selectedAnimalEnergy + " / " + selectedAnimalMaxEnergy);
+        selectedAnimalAgeField.setText("Selected Animal Age: " + selectedAnimalAge);
+        selectedAnimalChildrenCountField.setText("Children Count: " + selectedAnimalChildrenCount);
+        selectedAnimalGenesField.setText("Genes: " + selectedAnimalGenes);
+        selectedAnimalDateOfDeath.setText(dateOfDeath);
     }
 
     @Override
