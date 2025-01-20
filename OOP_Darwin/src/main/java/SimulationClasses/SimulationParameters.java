@@ -13,7 +13,7 @@ public record SimulationParameters (
         int dailyPlantGrowth,
         int initialAnimalCount,
         int initialAnimalEnergy,
-        int energyRequiredToBeFed,
+        int movementEnergyCost,
         int energyUsedForReproduction,
         int minMutations,
         int maxMutations,

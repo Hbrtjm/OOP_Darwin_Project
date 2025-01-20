@@ -46,11 +46,11 @@
                     <TextField fx:id="initialAnimalEnergyField" GridPane.rowIndex="7" GridPane.columnIndex="1" />
                     <Slider fx:id="initialAnimalEnergySlider" GridPane.rowIndex="7" GridPane.columnIndex="2" />
 
-                    <Label text="Energy to Be Fed:" GridPane.rowIndex="8" GridPane.columnIndex="0" />
-                    <TextField fx:id="energyRequiredToBeFedField" GridPane.rowIndex="8" GridPane.columnIndex="1" />
-                    <Slider fx:id="energyRequiredToBeFedSlider" GridPane.rowIndex="8" GridPane.columnIndex="2" />
+                    <Label text="Movement energy cost:" GridPane.rowIndex="8" GridPane.columnIndex="0" />
+                    <TextField fx:id="movementEnergyCostField" GridPane.rowIndex="8" GridPane.columnIndex="1" />
+                    <Slider fx:id="movementEnergyCostSlider" GridPane.rowIndex="8" GridPane.columnIndex="2" />
 
-                    <Label text="Energy for Reproduction:" GridPane.rowIndex="9" GridPane.columnIndex="0" />
+                    <Label text="Reproduction energy cost:" GridPane.rowIndex="9" GridPane.columnIndex="0" />
                     <TextField fx:id="energyUsedForReproductionField" GridPane.rowIndex="9" GridPane.columnIndex="1" />
                     <Slider fx:id="energyUsedForReproductionSlider" GridPane.rowIndex="9" GridPane.columnIndex="2" />
 
@@ -71,6 +71,7 @@
                     <Label text="Genome Length:" GridPane.rowIndex="14" GridPane.columnIndex="0" />
                     <TextField fx:id="genomeLengthField" GridPane.rowIndex="14" GridPane.columnIndex="1" />
                     <Slider fx:id="genomeLengthSlider" GridPane.rowIndex="14" GridPane.columnIndex="2" />
+
                 </GridPane>
             </VBox>
         </ScrollPane>

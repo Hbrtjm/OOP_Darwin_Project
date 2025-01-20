@@ -49,10 +49,10 @@ public class SimulationParametersController {
     @FXML private Slider initialAnimalCountSlider;
     @FXML private TextField initialAnimalEnergyField;
     @FXML private Slider initialAnimalEnergySlider;
-    @FXML private TextField energyRequiredToBeFedField;
-    @FXML private Slider energyRequiredToBeFedSlider;
     @FXML private TextField energyUsedForReproductionField;
     @FXML private Slider energyUsedForReproductionSlider;
+    @FXML private TextField movementEnergyCostField;
+    @FXML private Slider movementEnergyCostSlider;
     @FXML private TextField minMutationsField;
     @FXML private Slider minMutationsSlider;
     @FXML private TextField maxMutationsField;
@@ -91,7 +91,7 @@ public class SimulationParametersController {
         bindSliderToTextField(dailyPlantGrowthSlider, dailyPlantGrowthField);
         bindSliderToTextField(initialAnimalCountSlider, initialAnimalCountField);
         bindSliderToTextField(initialAnimalEnergySlider, initialAnimalEnergyField);
-        bindSliderToTextField(energyRequiredToBeFedSlider, energyRequiredToBeFedField);
+        bindSliderToTextField(movementEnergyCostSlider, movementEnergyCostField);
         bindSliderToTextField(energyUsedForReproductionSlider, energyUsedForReproductionField);
         bindSliderToTextField(minMutationsSlider, minMutationsField);
         bindSliderToTextField(maxMutationsSlider, maxMutationsField);
@@ -239,7 +239,6 @@ public class SimulationParametersController {
         dailyPlantGrowthField.setText(String.valueOf(parameters.dailyPlantGrowth()));
         initialAnimalCountField.setText(String.valueOf(parameters.initialAnimalCount()));
         initialAnimalEnergyField.setText(String.valueOf(parameters.initialAnimalEnergy()));
-        energyRequiredToBeFedField.setText(String.valueOf(parameters.energyRequiredToBeFed()));
         energyUsedForReproductionField.setText(String.valueOf(parameters.energyUsedForReproduction()));
         minMutationsField.setText(String.valueOf(parameters.minMutations()));
         maxMutationsField.setText(String.valueOf(parameters.maxMutations()));
@@ -297,17 +296,17 @@ public class SimulationParametersController {
         int dailyPlantGrowth = Integer.parseInt(dailyPlantGrowthField.getText());
         int initialAnimalCount = Integer.parseInt(initialAnimalCountField.getText());
         int initialAnimalEnergy = Integer.parseInt(initialAnimalEnergyField.getText());
-        int energyRequiredToBeFed = Integer.parseInt(energyRequiredToBeFedField.getText());
         int energyUsedForReproduction = Integer.parseInt(energyUsedForReproductionField.getText());
+        int movementEnergyCost = Integer.parseInt(movementEnergyCostField.getText());
         int minMutations = Integer.parseInt(minMutationsField.getText());
         int maxMutations = Integer.parseInt(maxMutationsField.getText());
         MutationType mutationVariant = mutationVariantComboBox.getValue();
         BehaviourType behaviourType = behaviourTypeComboBox.getValue();
         int genomeLength = Integer.parseInt(genomeLengthField.getText());
-        // TODO - Handle wrong values
+
         SimulationParameters parameters = new SimulationParameters(
                 mapWidth, mapHeight, mapVariant, initialPlantCount, plantEnergy,
-                dailyPlantGrowth, initialAnimalCount, initialAnimalEnergy, energyRequiredToBeFed,
+                dailyPlantGrowth, initialAnimalCount, initialAnimalEnergy, movementEnergyCost,
                 energyUsedForReproduction, minMutations, maxMutations,
                 mutationVariant, genomeLength, behaviourType
         );

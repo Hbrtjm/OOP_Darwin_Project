@@ -15,11 +15,7 @@ public class Genes implements Serializable, Iterable<Integer>, Iterator<Integer>
     public Genes(Mutation mutationType) {
         genesList = new ArrayList<>();
         this.mutation = mutationType;
-    }
 
-    public Genes(Genes other) {
-        this.genesList = new ArrayList<>(other.genesList); // Deep copy of the gene list
-        this.mutation = other.mutation;                   // Reference the same mutation
     }
 
     public void generateGenes(int genesAmount)
@@ -90,6 +86,11 @@ public class Genes implements Serializable, Iterable<Integer>, Iterator<Integer>
 
         int secondGenesAmount = (int) ((1-dominantFraction) * secondParentGenes.getGenesAmount());
 
+        while(firstGenesAmount + secondGenesAmount < firstParentGenes.getGenesAmount())
+        {
+            firstGenesAmount++;
+        }
+
         int leftOrRight = ThreadLocalRandom.current().nextInt(0, 2);
         int leftAmount;
         int rightAmount;
@@ -116,7 +117,8 @@ public class Genes implements Serializable, Iterable<Integer>, Iterator<Integer>
         }
         for(int i = rightAmount;i > 0;i--)
         {
-            genesList.add(rightGenes.getGenesList().get(rightGenes.getGenesList().size()-1-i));
+            genesList.add(rightGenes.getGenesList().get(rightGenes.getGenesList().size()-i));
         }
+        mutateGenes();
     }
 }

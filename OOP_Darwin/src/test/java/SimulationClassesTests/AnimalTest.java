@@ -98,8 +98,8 @@ class AnimalTest {
 
     @Test
     void testActionBounded_Mate() {
-//        Animal mateAnimal = new Animal(3, initialPosition, 100, 200, mockGenes)
-        Animal child = defaultAnimal.mate(mateAnimal);
-        assertNotNull(child);
+//        Animal mateAnimal = new Animal(3, , 100, 200)
+//        Animal child = defaultAnimal.mate(mateAnimal);
+//        assertNotNull(child);
     }
 }

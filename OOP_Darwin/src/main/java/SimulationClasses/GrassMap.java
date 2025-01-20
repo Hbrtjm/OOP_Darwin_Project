@@ -29,7 +29,7 @@ public class GrassMap extends AbstractMap {
         for(int i = 0;i < parameters.initialAnimalCount() && randomPositions.hasNext();i++)
         {
             Vector2d position = randomPositions.next();
-            placeAnimal(new Animal(ThreadLocalRandom.current().nextInt(0,8),position,parameters.initialAnimalEnergy(),parameters.genomeLength(),parameters.energyRequiredToBeFed(),parameters.mutationVariant(),parameters.behaviourType()));
+            placeAnimal(new Animal(ThreadLocalRandom.current().nextInt(0,8),position,parameters.initialAnimalEnergy(),parameters.genomeLength(),parameters.energyUsedForReproduction(),parameters.movementEnergyCost(),parameters.mutationVariant(),parameters.behaviourType()));
         }
     }
 

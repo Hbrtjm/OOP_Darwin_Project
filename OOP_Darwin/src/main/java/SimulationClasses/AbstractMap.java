@@ -6,6 +6,8 @@ import Interfaces.MapChangeListener;
 import Interfaces.PlantsManager;
 import Interfaces.WorldElement;
 import Interfaces.WorldMap;
+
+import java.io.Console;
 import java.util.*;
 
 abstract public class AbstractMap implements WorldMap {
@@ -81,7 +83,7 @@ abstract public class AbstractMap implements WorldMap {
                 animals.put(animal.getPosition(), new ArrayList<>());
             }
             animals.get(animal.getPosition()).add(animal);
-            System.out.println("Add");
+//            System.out.println("Add");
         }
     }
 
@@ -94,7 +96,7 @@ abstract public class AbstractMap implements WorldMap {
             {
                 animals.remove(animal.getPosition());
             }
-            System.out.println("Remove");
+//            System.out.println("Remove");
         }
     }
 
@@ -106,18 +108,16 @@ abstract public class AbstractMap implements WorldMap {
     }
 
     public void deleteCorpses() {
+        System.out.println("Deleting corpses..." + animals.values().size());
         animals.values().forEach(animalsList -> animalsList.removeIf(animal -> animal.getEnergyLevel() == 0));
+        System.out.println(animals.values().size());
         animals.entrySet().removeIf(entry -> entry.getValue().isEmpty());
     }
 
     public void moveAll() {
         Map<Vector2d, List<Animal>> animalsCopy = new HashMap<>();
         animals.forEach((key, value) -> animalsCopy.put(key, new ArrayList<>(value)));
-
         animalsCopy.values().forEach(animalList -> animalList.forEach(animal -> move(animal)));
-
-//        animals.values().forEach(animalList -> animalList.forEach(animal -> animal.moveNext(currentBounds)));
-//        System.out.println("moving animals");
     }
 
     private void orderAnimals(List<Animal> animals) {
@@ -140,18 +140,24 @@ abstract public class AbstractMap implements WorldMap {
 
 
     public void mateAll() {
-        for (Vector2d position : animals.keySet()) {
+        Collection<Vector2d> animalsPositions = animals.keySet();
+        List<Vector2d> distinctAnimalsPositions = animalsPositions.stream().distinct().toList();
+        for (Vector2d position : distinctAnimalsPositions) {
             ArrayList<Animal> animalList = animals.get(position);
             if (animalList != null && animalList.size() > 1) {
                 orderAnimals(animalList);
-                for(int i = 0;i < animalList.size()-1;i++) {
-                        Animal parent1 = animalList.get(i);
-                        Animal parent2 = animalList.get(i + 1);
+                int iterations =  animalList.size()-1;
+                System.out.println("Mating " + (int)((iterations)/2));
+
+                for(int i = 0;i < iterations;i+=2) {
+                    Animal parent1 = animalList.get(i);
+                    Animal parent2 = animalList.get(i + 1);
                     if(parent1.canMate() && parent2.canMate()) {
                         Animal child = parent1.mate(parent2);
                         placeAnimal(child);
                     }
                 }
+                System.out.println("Finished mating " + animalList.size());
             }
         }
     }
@@ -167,8 +173,8 @@ abstract public class AbstractMap implements WorldMap {
         moveAll();
         feedAll();
         mateAll();
+        System.out.println("Another day");
         plantsManager.growPlants();
-        System.out.println("test");
         daysCount++;
         mapChanged("Day " + daysCount);
     }
