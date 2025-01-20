@@ -170,32 +170,39 @@ public class SimulationWindowPresenter implements MapChangeListener {
             square++;
             oddCounter+=2;
         }
-        square = (int) Math.pow((double) (oddCounter - 1) /2,2);
+//        square = (int) Math.pow((double) (oddCounter - 1) / 2,2);
         return new Vector2d(square,square);
     }
 
     private void addAnimals(Vector2d place, Vector2d mapCoords, Vector2d cellSize) {
         ArrayList<Animal> animals = worldMap.getAnimalsAtPosition(place);
         StackPane cell = new StackPane();
-        double xStart = 0;
-        double yStart = 0;
         if (animals != null) {
             int n = animals.size();
+
             Vector2d layout = nearestBiggestSquare(n);
             int rows = layout.getX();
             int cols = layout.getY();
-
-//            double cellWidth = cell.getWidth();
-//            double cellHeight = cell.getHeight();
             double cellWidth = cellSize.getX();
             double cellHeight = cellSize.getY();
             double circleRadius = Math.min(cellWidth / cols, cellHeight / rows) / 2; // Adjust radius to fit
-
+            double centerX;
+            double centerY;
+            if(n == 1)
+            {
+                 centerX = 0;
+                 centerY = 0;
+            }
+            else
+            {
+                centerX = -circleRadius;
+                centerY = -circleRadius;
+            }
             for (int i = 0; i < n; i++) {
                 int row = i / rows;
                 int col = i % cols;
-                double xOffset = xStart + (col) * (cellWidth / cols);
-                double yOffset = yStart + (row) * (cellHeight / rows);
+                double xOffset = centerX + (col) * (cellWidth / cols);
+                double yOffset = centerY + (row) * (cellHeight / rows);
                 Circle circle = new Circle(circleRadius);
                 circle.setFill(Paint.valueOf("RED"));
                 circle.setTranslateX(xOffset);

@@ -240,6 +240,7 @@ public class SimulationParametersController {
         initialAnimalCountField.setText(String.valueOf(parameters.initialAnimalCount()));
         initialAnimalEnergyField.setText(String.valueOf(parameters.initialAnimalEnergy()));
         energyUsedForReproductionField.setText(String.valueOf(parameters.energyUsedForReproduction()));
+        movementEnergyCostField.setText(String.valueOf(parameters.movementEnergyCost()));
         minMutationsField.setText(String.valueOf(parameters.minMutations()));
         maxMutationsField.setText(String.valueOf(parameters.maxMutations()));
         mutationVariantComboBox.setValue(parameters.mutationVariant());
