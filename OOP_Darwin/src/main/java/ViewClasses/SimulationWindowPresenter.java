@@ -16,7 +16,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Paint;
 
-import java.util.ArrayList;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -38,6 +39,7 @@ public class SimulationWindowPresenter implements MapChangeListener {
     private double averageDeadAnimalAgeValue = 0;
     private int sumOfDeadAnimalsAgeValue = 0;
     private int deadAnimalsCountValue = 0;
+    private String mostFrequentGenome;
 
     long timePauseValue = 300;
     @FXML
@@ -58,6 +60,8 @@ public class SimulationWindowPresenter implements MapChangeListener {
     private Label averageDeadAnimalAge;
     @FXML
     private Label averageAnimalsChildrenCount;
+    @FXML
+    private Label mostCommonGenome;
     @FXML
     private Slider pauseTime;
     public void initialize(SimulationParameters sParameters)
@@ -335,6 +339,36 @@ public class SimulationWindowPresenter implements MapChangeListener {
     }
 
 
+private String findMostFrequentGenome() {
+    Map<List<Integer>, Integer> genomeFrequency = new HashMap<>();
+
+    int lowerX = worldMap.getCurrentBounds().lower().getX();
+    int lowerY = worldMap.getCurrentBounds().lower().getY();
+    int upperX = worldMap.getCurrentBounds().upper().getX();
+    int upperY = worldMap.getCurrentBounds().upper().getY();
+
+    for (int x = lowerX; x <= upperX; x++) {
+        for (int y = lowerY; y <= upperY; y++) {
+            ArrayList<Animal> animalsAtPosition = worldMap.getAnimalsAtPosition(new Vector2d(x, y));
+            if (animalsAtPosition != null) {
+                for (Animal animal : animalsAtPosition) {
+                    List<Integer> genome = animal.getGenes().getGenesList();
+                    genomeFrequency.put(genome, genomeFrequency.getOrDefault(genome, 0) + 1);
+                }
+                }
+            }
+        }
+
+
+    List<Map.Entry<List<Integer>, Integer>> sortedGenomes = genomeFrequency.entrySet().stream()
+            .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
+            .collect(Collectors.toList());
+
+    return sortedGenomes.isEmpty() ? Collections.emptyList().toString() : sortedGenomes.get(0).getKey().toString();
+    }
+
+
+
 
     private void drawMap()
     {
@@ -372,6 +406,7 @@ public class SimulationWindowPresenter implements MapChangeListener {
         averageAnimalEnergyValue = calculateAverageAnimalEnergy();
         averageDeadAnimalAgeValue = calculateAverageAgeForDeadAnimals();
         averageAnimalsChildrenCountValue = caluclateAverageChildrenCount();
+        mostFrequentGenome = findMostFrequentGenome();
 
         Platform.runLater(() -> {
             animalsCount.setText("Animals Count: " + animalsCountValue);
@@ -380,6 +415,7 @@ public class SimulationWindowPresenter implements MapChangeListener {
             averageAnimalEnergy.setText("Average Animal Energy: " + String.format("%.2f",averageAnimalEnergyValue));
             averageDeadAnimalAge.setText("Average Dead Animal Age: " + String.format("%.2f",averageDeadAnimalAgeValue));
             averageAnimalsChildrenCount.setText("Average Children Count of Animal: "+  String.format("%.2f",averageAnimalsChildrenCountValue));
+            mostCommonGenome.setText("Most frequent genome: " + mostFrequentGenome);
         });
 
     }
