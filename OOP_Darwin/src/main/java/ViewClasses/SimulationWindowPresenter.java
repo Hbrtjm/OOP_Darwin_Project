@@ -10,13 +10,11 @@ import SimulationClasses.SimulationParameters;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Slider;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Paint;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -140,16 +138,25 @@ public class SimulationWindowPresenter implements MapChangeListener {
     }
 
     private void addAnimal(Vector2d place, Vector2d mapCoords,Vector2d cellSize) {
-        Pane cell = new Pane();
+        StackPane cell = new StackPane();
         cell.setMaxWidth(cellSize.getX());
         cell.setMaxHeight(cellSize.getY());
+        cell.setPrefSize(cellSize.getX(), cellSize.getY());
         Circle circle = new Circle();
-        circle.setRadius(Math.min(cell.getWidth(), cell.getHeight()) / 4);
-        circle.setCenterX(cell.getWidth() / 2);
-        circle.setCenterY(cell.getHeight() / 2);
+//        circle.setRadius(Math.min(cell.getWidth(), cell.getHeight()) / 4);
+//        circle.setCenterX(cell.getWidth() / 2);
+//        circle.setCenterY(cell.getHeight() / 2);
+        // Adjust the circle size dynamically based on the cell's size
+        cell.widthProperty().addListener((observable, oldValue, newValue) -> {
+            circle.setRadius(Math.min(newValue.doubleValue(), cell.getHeight()) / 4);
+        });
+
+        cell.heightProperty().addListener((observable, oldValue, newValue) -> {
+            circle.setRadius(Math.min(cell.getWidth(), newValue.doubleValue()) / 4);
+        });
+
+        // Add the Circle to the StackPan
         circle.setFill(Paint.valueOf("RED"));
-        cell.setStyle("-fx-border-color: black; -fx-background-color: red;");
-        cell.getChildren().clear();
         cell.getChildren().add(circle);
         mapGrid.add(cell, mapCoords.getX(), mapCoords.getY());
     }
@@ -167,27 +174,32 @@ public class SimulationWindowPresenter implements MapChangeListener {
         return new Vector2d(square,square);
     }
 
-    private void addAnimals(Vector2d place, Vector2d mapCoords, Pane cell) {
+    private void addAnimals(Vector2d place, Vector2d mapCoords, Vector2d cellSize) {
         ArrayList<Animal> animals = worldMap.getAnimalsAtPosition(place);
+        StackPane cell = new StackPane();
+        double xStart = 0;
+        double yStart = 0;
         if (animals != null) {
             int n = animals.size();
             Vector2d layout = nearestBiggestSquare(n);
             int rows = layout.getX();
             int cols = layout.getY();
-            
+
 //            double cellWidth = cell.getWidth();
 //            double cellHeight = cell.getHeight();
-            double cellWidth = 10;
-            double cellHeight = 10;
+            double cellWidth = cellSize.getX();
+            double cellHeight = cellSize.getY();
             double circleRadius = Math.min(cellWidth / cols, cellHeight / rows) / 2; // Adjust radius to fit
 
             for (int i = 0; i < n; i++) {
-                int row = i / cols;
+                int row = i / rows;
                 int col = i % cols;
-                double xOffset = (col + 0.5) * (cellWidth / cols);
-                double yOffset = (row + 0.5) * (cellHeight / rows);
-                Circle circle = new Circle(xOffset, yOffset, circleRadius);
+                double xOffset = xStart + (col) * (cellWidth / cols);
+                double yOffset = yStart + (row) * (cellHeight / rows);
+                Circle circle = new Circle(circleRadius);
                 circle.setFill(Paint.valueOf("RED"));
+                circle.setTranslateX(xOffset);
+                circle.setTranslateY(yOffset);
                 cell.getChildren().add(circle);
             }
             mapGrid.add(cell, mapCoords.getX(), mapCoords.getY());
@@ -334,7 +346,7 @@ public class SimulationWindowPresenter implements MapChangeListener {
 //                System.out.println(worldMap.plantAt(new Vector2d(x,y)));
                 addPlantAt(new Vector2d(x,y),new Vector2d(x - lowerX,height - y + lowerY - 1));
                 if(worldMap.getAnimalsAtPosition(new Vector2d(x,y)) != null)
-                    addAnimal(new Vector2d(x,y),new Vector2d(x - lowerX,height - y + lowerY - 1), new Vector2d(CELL_WIDTH,CELL_HEIGHT));
+                    addAnimals(new Vector2d(x,y),new Vector2d(x - lowerX,height - y + lowerY - 1), new Vector2d(CELL_WIDTH,CELL_HEIGHT));
             }
         }
         animalsCountValue = calculateTotalAnimals();
