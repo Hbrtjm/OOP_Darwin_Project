@@ -40,6 +40,7 @@
             <Label fx:id="selectedAnimalChildrenCountField" text="Children Count: N/A" />
             <Label fx:id="selectedAnimalGenesField" text="Genes: N/A" />
             <Label fx:id="selectedAnimalDateOfDeath" />
+            <Label fx:id="selectedAnimalDescendants" />
         </VBox>
     </HBox>
 

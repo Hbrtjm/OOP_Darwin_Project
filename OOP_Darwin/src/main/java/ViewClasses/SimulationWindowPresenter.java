@@ -24,6 +24,7 @@ import javafx.scene.control.Label;
 import javafx.scene.shape.Circle;
 
 public class SimulationWindowPresenter implements MapChangeListener {
+
     private SimulationParameters parameters;
     private WorldMap worldMap;
     private Simulation simulation;
@@ -53,6 +54,8 @@ public class SimulationWindowPresenter implements MapChangeListener {
     private Label selectedAnimalGenesField;
     @FXML
     private Label selectedAnimalDateOfDeath;
+    @FXML
+    private Label selectedAnimalDescendants;
     @FXML
     private Label updateLabel;
     @FXML
@@ -447,10 +450,11 @@ private String findMostFrequentGenome() {
             averageAnimalsChildrenCount.setText("Average Children Count of Animal: "+  String.format("%.2f",averageAnimalsChildrenCountValue));
             mostCommonGenome.setText("Most frequent genome: " + mostFrequentGenome);
         });
-        int selectedAnimalEnergy;
-        int selectedAnimalMaxEnergy;
-        int selectedAnimalAge;
-        int selectedAnimalChildrenCount;
+        String selectedAnimalEnergy;
+        String selectedAnimalMaxEnergy;
+        String selectedAnimalAge;
+        String selectedAnimalChildrenCount;
+        String descendantsCount;
         String selectedAnimalGenes;
         String selectedAnimalChildren;
         String dateOfDeath;
