@@ -1,17 +1,26 @@
 package SimulationClasses;
 
+import BaseClasses.SimulationConstants;
 import Interfaces.WorldMap;
 import Enums.MapType;
 
 public class Simulation implements Runnable {
     private final WorldMap map;
-    private int pauseTime = 500;
-    private boolean running = true;
-    private boolean paused = false;
+    private volatile int pauseTime = SimulationConstants.DEFAULT_PAUSE_TIME_MS;
+    private volatile boolean running = true;
+    private volatile boolean paused = false;
 
 
+    /**
+     * Sets the pause time between simulation frames.
+     * @param pause The pause time in milliseconds (must be non-negative)
+     * @throws IllegalArgumentException if pause is negative
+     */
     public void setPause(int pause)
     {
+        if (pause < 0) {
+            throw new IllegalArgumentException("Pause time cannot be negative");
+        }
         pauseTime = pause;
     }
     public Simulation(WorldMap wMap) {
@@ -39,6 +48,8 @@ public class Simulation implements Runnable {
             try {
                 Thread.sleep(pauseTime);
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return;
             }
         }
     }

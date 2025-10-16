@@ -1,21 +1,38 @@
 package SimulationClasses;
 
 import BaseClasses.Boundary;
+import BaseClasses.SimulationConstants;
 import BaseClasses.Vector2d;
 import Interfaces.MapChangeListener;
 import Interfaces.PlantsManager;
 import Interfaces.WorldElement;
 import Interfaces.WorldMap;
 
-import java.io.Console;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
+/**
+ * Abstract base class for all map implementations in the Darwin simulation.
+ * Provides common functionality for animal management, plant interactions, and simulation lifecycle.
+ * Thread-safe implementation using concurrent collections.
+ */
 abstract public class AbstractMap implements WorldMap {
+    private static final Logger LOGGER = Logger.getLogger(AbstractMap.class.getName());
+    
     protected Boundary currentBounds;
     protected PlantsManager plantsManager;
     protected Map<Vector2d, ArrayList<Animal>> animals;
     protected int daysCount;
     protected final List<MapChangeListener> subscribers;
+    protected SimulationStatistics statistics;
+    
+    // Performance tracking
+    private long lastFrameTime;
+    private int totalAnimalsProcessed;
+    private int totalMatingEvents;
 
     @Override
     public void setBoundary(Boundary givenBoundary)
@@ -36,22 +53,53 @@ abstract public class AbstractMap implements WorldMap {
     {
         subscribers.add(listener);
     }
+    /**
+     * Default constructor with thread-safe collections and performance tracking.
+     */
     public AbstractMap() {
-        currentBounds = new Boundary(new Vector2d(0,0), new Vector2d(10,10));
+        currentBounds = new Boundary(
+            new Vector2d(SimulationConstants.DEFAULT_MAP_MIN_X, SimulationConstants.DEFAULT_MAP_MIN_Y),
+            new Vector2d(SimulationConstants.DEFAULT_MAP_MAX_X, SimulationConstants.DEFAULT_MAP_MAX_Y)
+        );
         plantsManager = new CreepingJunglePlantsManager(currentBounds);
-        this.animals = new HashMap<>();
+        this.animals = new ConcurrentHashMap<>();
         this.daysCount = 0;
-        this.subscribers = new ArrayList<>();
+        this.subscribers = new CopyOnWriteArrayList<>();
+        this.statistics = new SimulationStatistics();
+        this.lastFrameTime = System.currentTimeMillis();
+        this.totalAnimalsProcessed = 0;
+        this.totalMatingEvents = 0;
+        
+        LOGGER.info("AbstractMap initialized with default bounds: " + currentBounds);
     }
 
+    /**
+     * Constructor with custom boundary.
+     * @param boundary The map boundary
+     * @throws IllegalArgumentException if boundary is null
+     */
     public AbstractMap(Boundary boundary) {
         this();
+        if (boundary == null) {
+            throw new IllegalArgumentException("Boundary cannot be null");
+        }
         this.currentBounds = boundary;
+        LOGGER.info("AbstractMap initialized with custom bounds: " + boundary);
     }
 
+    /**
+     * Constructor with boundary and initial animals.
+     * @param boundary The map boundary
+     * @param newAnimals Initial animals to place on the map
+     * @throws IllegalArgumentException if boundary is null or animals list is null
+     */
     public AbstractMap(Boundary boundary, List<Animal> newAnimals) {
         this(boundary);
+        if (newAnimals == null) {
+            throw new IllegalArgumentException("Animals list cannot be null");
+        }
         addAnimals(newAnimals);
+        LOGGER.info("AbstractMap initialized with " + newAnimals.size() + " initial animals");
     }
 
     private void addAnimals(List<Animal> newAnimals) {
@@ -74,29 +122,53 @@ abstract public class AbstractMap implements WorldMap {
         this.currentBounds = boundary;
     }
 
-    public void placeAnimal(Animal animal)
-    {
-        if(animal != null)
-        {
-            if(!animals.containsKey(animal.getPosition()))
-            {
-                animals.put(animal.getPosition(), new ArrayList<>());
-            }
-            animals.get(animal.getPosition()).add(animal);
-//            System.out.println("Add");
+    /**
+     * Places an animal on the map at its current position.
+     * Thread-safe implementation with validation.
+     * @param animal The animal to place
+     * @throws IllegalArgumentException if animal is null or position is invalid
+     */
+    public void placeAnimal(Animal animal) {
+        if (animal == null) {
+            throw new IllegalArgumentException("Cannot place null animal");
         }
+        
+        Vector2d position = animal.getPosition();
+        if (!currentBounds.isInside(position)) {
+            LOGGER.warning("Attempting to place animal outside bounds: " + position);
+            return;
+        }
+        
+        animals.computeIfAbsent(position, k -> new ArrayList<>()).add(animal);
+        totalAnimalsProcessed++;
+        
+        LOGGER.fine("Animal placed at position: " + position);
     }
 
-    protected void removeAnimal(Animal animal)
-    {
-        if(animal != null)
-        {
-            animals.get(animal.getPosition()).remove(animal);
-            if(animals.get(animal.getPosition()).isEmpty())
-            {
-                animals.remove(animal.getPosition());
+    /**
+     * Removes an animal from the map.
+     * Thread-safe implementation with validation.
+     * @param animal The animal to remove
+     */
+    protected void removeAnimal(Animal animal) {
+        if (animal == null) {
+            LOGGER.warning("Attempting to remove null animal");
+            return;
+        }
+        
+        Vector2d position = animal.getPosition();
+        List<Animal> animalsAtPosition = animals.get(position);
+        
+        if (animalsAtPosition != null) {
+            boolean removed = animalsAtPosition.remove(animal);
+            if (removed) {
+                if (animalsAtPosition.isEmpty()) {
+                    animals.remove(position);
+                }
+                LOGGER.fine("Animal removed from position: " + position);
+            } else {
+                LOGGER.warning("Animal not found at expected position: " + position);
             }
-//            System.out.println("Remove");
         }
     }
 
@@ -209,4 +281,3 @@ abstract public class AbstractMap implements WorldMap {
     }
 
 }
-

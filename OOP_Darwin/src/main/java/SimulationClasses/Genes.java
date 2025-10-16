@@ -1,5 +1,6 @@
 package SimulationClasses;
 
+import BaseClasses.SimulationConstants;
 import Interfaces.Mutation;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public class Genes implements Serializable, Iterable<Integer>, Iterator<Integer>
     {
         List<Integer> newGenes = new ArrayList<>();
         while(genesAmount-- != 0) {
-            newGenes.add(ThreadLocalRandom.current().nextInt(0, 8));
+            newGenes.add(ThreadLocalRandom.current().nextInt(SimulationConstants.MIN_GENE_VALUE, SimulationConstants.MAX_GENE_VALUE));
         }
         genesList = newGenes;
     }
@@ -43,8 +44,26 @@ public class Genes implements Serializable, Iterable<Integer>, Iterator<Integer>
 
     @Override
     public Iterator<Integer> iterator() {
-        // TODO - Implement iterator
-        return null;
+        return new GenesIterator();
+    }
+
+    private class GenesIterator implements Iterator<Integer> {
+        private int index = 0;
+
+        @Override
+        public boolean hasNext() {
+            return !genesList.isEmpty();
+        }
+
+        @Override
+        public Integer next() {
+            if (genesList.isEmpty()) {
+                throw new IllegalStateException("No genes available");
+            }
+            Integer gene = genesList.get(index % genesList.size());
+            index++;
+            return gene;
+        }
     }
 
     @Override
@@ -97,7 +116,7 @@ public class Genes implements Serializable, Iterable<Integer>, Iterator<Integer>
             firstGenesAmount++;
         }
 
-        int leftOrRight = ThreadLocalRandom.current().nextInt(0, 2);
+        int leftOrRight = ThreadLocalRandom.current().nextInt(0, SimulationConstants.BINARY_CHOICE_BOUND);
         int leftAmount;
         int rightAmount;
         Genes leftGenes;

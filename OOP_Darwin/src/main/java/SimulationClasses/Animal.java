@@ -3,10 +3,12 @@ package SimulationClasses;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
 import BaseClasses.Boundary;
 import BaseClasses.MoveTranslator;
+import BaseClasses.SimulationConstants;
 import BaseClasses.Vector2d;
 import Enums.BehaviourType;
 import Enums.MapDirection;
@@ -20,17 +22,14 @@ public class Animal implements WorldElement {
     private int age = 0;
     private List<Animal> children = new ArrayList<>();
     public int color;
-    private int energyLevel = 150;
+    private int energyLevel = SimulationConstants.DEFAULT_ENERGY_LEVEL;
     private MutationType mutation;
-    // If the maxEnergyLevel value can be universal, then we can make it a static
     private int maxEnergyLevel;
     private Vector2d currentPosition;
     private Integer currentDirection;
     private int movementEnergyCost;
     private int matingEnergy;
-    private int currentMove;
     private Genes genes;
-    private Collection<Animal> kids;
 
     public void setDayOfDeath(int dayOfDeath)
     {
@@ -49,11 +48,12 @@ public class Animal implements WorldElement {
     public Animal()
     {
         color = 0;
-        int genesAmount = ThreadLocalRandom.current().nextInt(1, 101);
+        int genesAmount = ThreadLocalRandom.current().nextInt(SimulationConstants.MIN_GENES_AMOUNT, SimulationConstants.MAX_GENES_AMOUNT + 1);
+        genes = new Genes(null); // Initialize genes first
         genes.generateGenes(genesAmount);
-        maxEnergyLevel = Integer.MAX_VALUE;
-        currentDirection = 0;
-        currentPosition = new Vector2d(2, 2);
+        maxEnergyLevel = SimulationConstants.DEFAULT_MAX_ENERGY_LEVEL;
+        currentDirection = SimulationConstants.DEFAULT_INITIAL_DIRECTION;
+        currentPosition = SimulationConstants.DEFAULT_ANIMAL_POSITION;
     }
 
     public Animal(Integer direction, Vector2d position, int maxEnergy, int genesAmount, int matingEnergy, int givenMovementEnergyCost, MutationType mutationType, BehaviourType behaviourType)
@@ -167,7 +167,7 @@ public class Animal implements WorldElement {
     public void setPositionAndDirection(Vector2d newPosition, int directionChange)
     {
         currentPosition = newPosition;
-        currentDirection = (currentDirection+directionChange)%8;
+        currentDirection = (currentDirection+directionChange) % SimulationConstants.DIRECTION_COUNT;
     }
 
     @Override
@@ -186,7 +186,7 @@ public class Animal implements WorldElement {
         {
             // Gets pushed back if it doesn't comply with the boundary, then turns around
             currentPosition = currentPosition.subtract(MoveTranslator.TranslateOne(currentDirection).toUnitVector());
-            currentDirection = MapDirection.changeDirection(currentDirection,4);
+            currentDirection = MapDirection.changeDirection(currentDirection, SimulationConstants.TURN_AROUND_DIRECTION);
         }
         System.out.println("Moving " + movementEnergyCost);
         subtractEnergy(movementEnergyCost);
@@ -205,7 +205,7 @@ public class Animal implements WorldElement {
         if (newPosition.getY() > boundary.upper().getY() || newPosition.getY() < boundary.lower().getY() )
         {
 
-            currentDirection = MapDirection.changeDirection(currentDirection,4);
+            currentDirection = MapDirection.changeDirection(currentDirection, SimulationConstants.TURN_AROUND_DIRECTION);
         }
         else
         {
@@ -251,10 +251,10 @@ public class Animal implements WorldElement {
         // Genes of self and other with proportions according to current energies
         childGenes.combineGenes(energyLevel,other.getEnergyLevel(),genes,other.getGenes());
         // Child starts with a random initial direction
-        int randomChildDirection = ThreadLocalRandom.current().nextInt(0,9);
+        int randomChildDirection = ThreadLocalRandom.current().nextInt(0, SimulationConstants.RANDOM_DIRECTION_BOUND);
         Animal child = new Animal(randomChildDirection,currentPosition,maxEnergyLevel,childGenes,matingEnergy,movementEnergyCost,mutation,behaviour);
         // Child's energy is not maximal energy, but the sum of mating energy, so that the thermodynamics laws are kept
-        child.setEnergyLevel(2*matingEnergy);
+        child.setEnergyLevel(SimulationConstants.MATING_ENERGY_MULTIPLIER * matingEnergy);
         subtractEnergy(matingEnergy);
         other.subtractEnergy(matingEnergy);
         children.add(child);
